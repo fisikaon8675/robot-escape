@@ -145,19 +145,20 @@ function update() {
 
     const forceAmount = 0.002; // Besaran Gaya (F)
 
-    // Bergerak ke Kiri
-    if (cursors.left.isDown) {
-        robot.applyForce({ x: -forceAmount, y: 0 }); // Mendorong ke kiri (X negatif)
+    // Bergerak ke Kiri (Pakai keyboard ATAU tombol HP)
+    if (cursors.left.isDown || isLeftDown) {
+        robot.applyForce({ x: -forceAmount, y: 0 });
     }
     // Bergerak ke Kanan
-    else if (cursors.right.isDown) {
-        robot.applyForce({ x: forceAmount, y: 0 }); // Mendorong ke kanan (X positif)
+    else if (cursors.right.isDown || isRightDown) {
+        robot.applyForce({ x: forceAmount, y: 0 });
     }
 
-    // Melompat (Hanya bisa melompat jika kecepatan Y-nya mendekati 0 / sedang di lantai)
-    if (cursors.up.isDown && Math.abs(robot.body.velocity.y) < 0.1) {
-        robot.setVelocityY(-10); // Memberikan dorongan instan ke atas
-    }
+    // Melompat
+    if ((cursors.up.isDown || isJumpDown) && Math.abs(robot.body.velocity.y) < 0.1) {
+        robot.setVelocityY(-10);
+        isJumpDown = false; // Mencegah robot melompat terus jika jari ditahan
+}
     // DETEKSI KEMENANGAN
     if (!misiSelesai && kayu.x > 1150 && besi.x > 1150) {
         misiSelesai = true; 
