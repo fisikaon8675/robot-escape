@@ -1,10 +1,12 @@
+let robot; // Variabel global untuk robot
+
 const config = {
     type: Phaser.AUTO,
     scale: {
-        mode: Phaser.Scale.FIT, // Menyesuaikan otomatis dengan layar tanpa merusak rasio
-        autoCenter: Phaser.Scale.CENTER_BOTH, // Membuat canvas selalu berada di tengah layar
-        width: 1280, // Resolusi dasar lebar
-        height: 720  // Resolusi dasar tinggi
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1280,
+        height: 720
     },
     backgroundColor: '#87CEEB',
     physics: {
@@ -21,4 +23,31 @@ const config = {
     }
 };
 
-// ... (sisa kode game, preload, create, update biarkan seperti sebelumnya) ...
+const game = new Phaser.Game(config);
+
+function preload() {
+    // Kosong untuk saat ini
+}
+
+function create() {
+    // 1. MEMBUAT LANTAI (GROUND)
+    const groundVisual = this.add.rectangle(640, 700, 1280, 50, 0x228B22); 
+    this.matter.add.gameObject(groundVisual, { 
+        isStatic: true 
+    });
+
+    // 2. MEMBUAT ROBOT (Karakter Utama)
+    const robotVisual = this.add.rectangle(200, 100, 50, 50, 0xFFD700);
+    robot = this.matter.add.gameObject(robotVisual, {
+        mass: 1,
+        restitution: 0.4,
+        friction: 0.05,
+        label: 'robot'
+    });
+
+    console.log("Lantai dan Robot berhasil dibuat!");
+}
+
+function update() {
+    // Kosong untuk saat ini
+}
