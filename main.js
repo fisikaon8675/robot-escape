@@ -183,16 +183,47 @@ function update() {
         // 4. Membuat Tombol Interaktif "Lanjut ke Kuis"
         const tombolKuis = this.add.text(640, 550, '[ MULA KUIS ]', {
             fontSize: '32px',
-            fill: '#ffff00', // Warna kuning
+            fill: '#ffff00', // Warna kuning   
             fontStyle: 'bold',
             backgroundColor: '#333333',
             padding: { x: 20, y: 10 }
         }).setOrigin(0.5).setInteractive(); // setInteractive() membuat teks bisa diklik layaknya tombol HTML
 
-        // 5. Logika saat tombol diklik (Akan dikerjakan di Tahap C)
+        // 5. Logika saat tombol Kuis diklik
         tombolKuis.on('pointerdown', () => {
-            tombolKuis.setText("Memuat kuis...");
-            // Nanti kode kuis kita masukkan ke sini
+            // Menutupi layar materi sebelumnya dengan warna abu-abu gelap pekat
+            this.add.rectangle(640, 360, 1280, 720, 0x222222);
+
+            // Pertanyaan Kuis
+            const pertanyaan = "KUIS BUKTI PEMAHAMAN:\nMengapa kotak besi jauh lebih sulit didorong/digeser dibandingkan kotak kayu?";
+            this.add.text(640, 200, pertanyaan, {
+                fontSize: '32px', fill: '#ffffff', align: 'center', wordWrap: { width: 900 }
+            }).setOrigin(0.5);
+
+            // Fungsi praktis untuk membuat tombol jawaban (agar kode tidak berulang)
+            const buatTombolJawaban = (posisiY, teks, apakahBenar) => {
+                const opsi = this.add.text(640, posisiY, teks, {
+                    fontSize: '24px', fill: '#000000', backgroundColor: '#eeeeee',
+                    padding: { x: 20, y: 15 }, wordWrap: { width: 800 }
+                }).setOrigin(0.5).setInteractive();
+
+                opsi.on('pointerdown', () => {
+                    if (apakahBenar) {
+                        opsi.setBackgroundColor('#00ff00'); // Berubah hijau jika benar
+                        this.add.text(640, 600, "BENAR! Portal Terbuka!", { fontSize: '36px', fill: '#00ff00', fontStyle: 'bold' }).setOrigin(0.5);
+                        
+                        // (Nanti di Tahap D, kode Portal ditambahkan di sini)
+                    } else {
+                        opsi.setBackgroundColor('#ff0000'); // Berubah merah jika salah
+                        this.add.text(640, 600, "SALAH! Coba ingat Hukum Newton 1.", { fontSize: '24px', fill: '#ff0000' }).setOrigin(0.5);
+                    }
+                });
+            };
+
+            // Membuat 3 Pilihan Ganda
+            buatTombolJawaban(350, "A. Karena besi memiliki massa dan inersia (kelembaman) yang lebih besar.", true);
+            buatTombolJawaban(430, "B. Karena robot tidak memiliki cukup energi listrik untuk mendorongnya.", false);
+            buatTombolJawaban(510, "C. Karena gaya gravitasi bumi menolak benda yang terbuat dari logam.", false);
         });
     }
 }
