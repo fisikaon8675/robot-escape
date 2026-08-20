@@ -1,7 +1,11 @@
 const config = {
     type: Phaser.AUTO,
-    width: 960,  // <-- Diubah untuk rasio 16:9
-    height: 540, // <-- Diubah untuk rasio 16:9
+    scale: {
+        mode: Phaser.Scale.FIT, // Menyesuaikan otomatis dengan layar tanpa merusak rasio
+        autoCenter: Phaser.Scale.CENTER_BOTH, // Membuat canvas selalu berada di tengah layar
+        width: 1280, // Resolusi dasar lebar
+        height: 720  // Resolusi dasar tinggi
+    },
     backgroundColor: '#87CEEB',
     physics: {
         default: 'matter',
