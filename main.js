@@ -27,7 +27,8 @@ const config = {
 const game = new Phaser.Game(config);
 
 function preload() {
-    // Kosong untuk saat ini
+    // Memuat gambar ke dalam memori Phaser dengan nama kunci 'robot-sprite'
+    this.load.image('robot-sprite', 'assets/robot.png');
 }
 
 function create() {
