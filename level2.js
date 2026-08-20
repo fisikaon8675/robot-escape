@@ -101,5 +101,20 @@ function create() {
     }).setOrigin(0.5);
 }
 function update() {
-    // Kosong untuk saat ini
+    const gayaDorong = 0.005; // Kekuatan dorongan robot
+
+    // Bergerak ke Kiri
+    if (cursors.left.isDown || isLeftDown) {
+        robot.applyForce({ x: -gayaDorong, y: 0 });
+    }
+    // Bergerak ke Kanan
+    else if (cursors.right.isDown || isRightDown) {
+        robot.applyForce({ x: gayaDorong, y: 0 });
+    }
+
+    // Melompat (hanya bisa jika robot sedang menyentuh tanah/kecepatan Y mendekati 0)
+    if ((cursors.up.isDown || isJumpDown) && Math.abs(robot.body.velocity.y) < 0.1) {
+        robot.setVelocityY(-10);
+        isJumpDown = false; // Mencegah lompat terus-menerus
+    }
 }
