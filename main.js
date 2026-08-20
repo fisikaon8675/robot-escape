@@ -57,21 +57,21 @@ function create() {
 
     // Balok Kayu (Ringan)
     // Posisi X: 500, Y: 600, Ukuran: 60x60, Warna: Coklat (0x8B4513)
-    kayuVisual = this.add.image(500, 600, 'kayu-sprite').setDisplaySize(60, 60);
-    this.matter.add.gameObject(kayuVisual, {
+    kayu = this.add.image(500, 600, 'kayu-sprite').setDisplaySize(60, 60);
+    this.matter.add.gameObject(kayu, {
         shape: { type: 'rectangle', width: 60, height: 60 },
-        mass: 0.5,       // Setengah dari massa robot (Sangat ringan)
-        friction: 0.05,  // Licin
+        mass: 0.5,
+        friction: 0.05,
         restitution: 0.2
     });
 
     // Balok Besi (Berat)
     // Posisi X: 800, Y: 600, Ukuran: 60x60, Warna: Abu-abu (0x808080)
-    besiVisual = this.add.image(800, 600, 'besi-sprite').setDisplaySize(60, 60);
-    this.matter.add.gameObject(besiVisual, {
+    besi = this.add.image(800, 600, 'besi-sprite').setDisplaySize(60, 60);
+    this.matter.add.gameObject(besi, {
         shape: { type: 'rectangle', width: 60, height: 60 },
-        mass: 20,        // 20x lipat massa robot (Sangat berat!)
-        friction: 0.6,   // Kasar (sulit digeser)
+        mass: 20,
+        friction: 0.6,
         restitution: 0.05
     });
     
@@ -90,7 +90,6 @@ function create() {
         align: 'center', // Membuat teks rata tengah
         wordWrap: { width: 800 } // Memaksa teks turun ke baris baru jika lebarnya melebihi 800 piksel
     }).setOrigin(0.5);
-
     // Animasi memudarkan teks (Fade Out)
     this.tweens.add({
         targets: teksMisi,
