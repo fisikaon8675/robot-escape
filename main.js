@@ -73,6 +73,31 @@ function create() {
     
     console.log("Lantai dan Robot berhasil dibuat!");
     // (Tambahkan di baris paling bawah fungsi create)
+
+    // 4. MENAMBAHKAN TEKS MISI (UI)
+    const isiMisi = "MISI PELARIAN LABORATORIUM\n\nAnda adalah robot uji coba! Gunakan tombol panah untuk memberikan GAYA dorong (F).\n\nIngat Hukum Newton II (F = m.a):\n- Kotak kayu massanya ringan, mudah digeser.\n- Kotak besi massanya besar dan gesekannya tinggi, butuh momentum ekstra!\n\nDorong rintangan dan temukan jalan keluar!";
+
+    const teksMisi = this.add.text(640, 200, isiMisi, {
+        fontSize: '24px', // Ukuran font diperkecil sedikit agar pas
+        fill: '#ffffff',
+        fontStyle: 'bold',
+        stroke: '#000000',
+        strokeThickness: 5,
+        align: 'center', // Membuat teks rata tengah
+        wordWrap: { width: 800 } // Memaksa teks turun ke baris baru jika lebarnya melebihi 800 piksel
+    }).setOrigin(0.5);
+
+    // Animasi memudarkan teks (Fade Out)
+    this.tweens.add({
+        targets: teksMisi,
+        alpha: 0,        
+        duration: 2000,  
+        delay: 8000,     // DIUBAH: Menunggu 8 detik agar pemain punya waktu untuk membaca semuanya
+        onComplete: () => { 
+            teksMisi.destroy(); 
+        }
+    });
+    
     cursors = this.input.keyboard.createCursorKeys();
 }
 
