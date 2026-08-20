@@ -52,7 +52,7 @@ function create() {
         friction: 0.05,
         label: 'robot'
         }).setFixedRotation();
-    });
+    
     // 3. MENAMBAHKAN RINTANGAN (Eksperimen Massa)
 
     // Balok Kayu (Ringan)
