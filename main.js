@@ -1,5 +1,8 @@
 let robot;
 let cursors; // Menangkap input keyboard
+let kayu;         // Untuk melacak posisi kayu
+let besi;         // Untuk melacak posisi besi
+let misiSelesai = false; // Mencegah kode kemenangan berjalan berkali-kali
 
 const config = {
     type: Phaser.AUTO,
@@ -41,7 +44,7 @@ function create() {
     });
 
     // 2. MEMBUAT ROBOT (Karakter Utama)
-    const robotVisual = this.add.image(200, 100, 'robot-sprite').setDisplaySize(60, 50);
+    robotVisual = this.add.image(200, 100, 'robot-sprite').setDisplaySize(60, 50);
     robot = this.matter.add.gameObject(robotVisual, {
         shape: { type: 'rectangle', width: 60, height: 50 },
         mass: 1,
@@ -54,7 +57,7 @@ function create() {
 
     // Balok Kayu (Ringan)
     // Posisi X: 500, Y: 600, Ukuran: 60x60, Warna: Coklat (0x8B4513)
-    const kayuVisual = this.add.image(500, 600, 'kayu-sprite').setDisplaySize(60, 60);
+    kayuVisual = this.add.image(500, 600, 'kayu-sprite').setDisplaySize(60, 60);
     this.matter.add.gameObject(kayuVisual, {
         shape: { type: 'rectangle', width: 60, height: 60 },
         mass: 0.5,       // Setengah dari massa robot (Sangat ringan)
@@ -64,7 +67,7 @@ function create() {
 
     // Balok Besi (Berat)
     // Posisi X: 800, Y: 600, Ukuran: 60x60, Warna: Abu-abu (0x808080)
-    const besiVisual = this.add.image(800, 600, 'besi-sprite').setDisplaySize(60, 60);
+    besiVisual = this.add.image(800, 600, 'besi-sprite').setDisplaySize(60, 60);
     this.matter.add.gameObject(besiVisual, {
         shape: { type: 'rectangle', width: 60, height: 60 },
         mass: 20,        // 20x lipat massa robot (Sangat berat!)
@@ -98,7 +101,10 @@ function create() {
             teksMisi.destroy(); 
         }
     });
-    
+    // 5. MEMBUAT ZONA FINISH
+    // Posisi X: 1200 (ujung kanan layar), Y: 600, Lebar: 100, Tinggi: 200, Warna: Hijau Transparan
+    const finishZone = this.add.rectangle(1200, 600, 100, 200, 0x00ff00, 0.3);
+
     cursors = this.input.keyboard.createCursorKeys();
 }
 
@@ -120,5 +126,14 @@ function update() {
     // Melompat (Hanya bisa melompat jika kecepatan Y-nya mendekati 0 / sedang di lantai)
     if (cursors.up.isDown && Math.abs(robot.body.velocity.y) < 0.1) {
         robot.setVelocityY(-10); // Memberikan dorongan instan ke atas
+    }
+    // DETEKSI KEMENANGAN
+    // Memeriksa apakah kayu DAN besi sudah melewati sumbu X 1150 (masuk zona hijau)
+    if (!misiSelesai && kayu.x > 1150 && besi.x > 1150) {
+        misiSelesai = true; // Kunci agar kode ini hanya berjalan satu kali
+        console.log("Berhasil! Kedua kotak telah mencapai garis finish!");
+        
+        // (Nanti di tahap selanjutnya, kita memanggil layar penjelasan Newton di sini)
+        robot.setTint(0x00ff00); // Mengubah warna robot jadi hijau sementara sebagai tanda menang
     }
 }
