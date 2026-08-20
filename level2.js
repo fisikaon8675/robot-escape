@@ -37,70 +37,79 @@ function preload() {
 }
 
 function create() {
-    // 1. MEMBUAT LANTAI DASAR DAN PANGGUNG TENGAH
-    const lantai = this.add.rectangle(640, 700, 1280, 50, 0x654321);
-    this.matter.add.gameObject(lantai, { isStatic: true });
+    // 1. LANTAI DASAR (Tempat memikirkan pilihan)
+    const lantai = this.add.rectangle(640, 700, 1280, 50, 0x4a4a4a);
+    this.matter.add.gameObject(lantai, { isStatic: true, friction: 0.1 });
 
-    const panggungTengah = this.add.rectangle(640, 300, 300, 20, 0xaaaaaa);
-    this.matter.add.gameObject(panggungTengah, { isStatic: true });
-
-    // 2. TANJAKAN KARET (KIRI) - GAYA GESEK TINGGI
-    const tanjakanKaret = this.add.rectangle(350, 500, 600, 20, 0x333333);
+    // 2. DESAIN TANJAKAN KARET (KIRI) - KASAR & GELAP
+    // Posisi X di 300, miring ke kiri atas
+    const tanjakanKaret = this.add.rectangle(300, 550, 600, 25, 0x3a2f2f);
     this.matter.add.gameObject(tanjakanKaret, { 
         isStatic: true, 
-        angle: 0.6,    // Dimiringkan (dalam radian)
-        friction: 0.8  // Gesekan sangat tinggi (kasar)
+        angle: 0.5,    
+        friction: 0.8  // Gesekan sangat tinggi
     });
-    this.add.text(350, 550, "JALUR KARET (Friction: 0.8)", { fontSize: '20px', fill: '#ffffff' }).setOrigin(0.5);
+    // UI Label Karet
+    this.add.text(300, 620, "⚠️ JALUR KARET\nSangat Kasar!", { 
+        fontSize: '22px', fill: '#ff6666', align: 'center', fontStyle: 'bold' 
+    }).setOrigin(0.5);
 
-    // 3. TANJAKAN ES (KANAN) - GAYA GESEK RENDAH
-    const tanjakanEs = this.add.rectangle(930, 500, 600, 20, 0xADD8E6);
+    // 3. DESAIN TANJAKAN ES (KANAN) - LICIN & CERAH
+    // Posisi X di 980, miring ke kanan atas
+    const tanjakanEs = this.add.rectangle(980, 550, 600, 25, 0xaaddff);
     this.matter.add.gameObject(tanjakanEs, { 
         isStatic: true, 
-        angle: -0.6,   // Dimiringkan ke arah berlawanan
-        friction: 0.01 // Sangat licin
+        angle: -0.5,   
+        friction: 0.005 // Sangat licin (hampir nol)
     });
-    this.add.text(930, 550, "JALUR ES (Friction: 0.01)", { fontSize: '20px', fill: '#ffffff' }).setOrigin(0.5);
+    // UI Label Es
+    this.add.text(980, 620, "❄️ JALUR ES\nSangat Licin!", { 
+        fontSize: '22px', fill: '#66ccff', align: 'center', fontStyle: 'bold' 
+    }).setOrigin(0.5);
 
-    // 4. MENAMBAHKAN ROBOT DAN KOTAK KAYU
-    const kayuVisual = this.add.image(150, 600, 'kayu-sprite').setDisplaySize(50, 50);
-    kayu = this.matter.add.gameObject(kayuVisual, { // <-- HAPUS kata 'let' di sini
+    // 4. MEMBUAT DUA ZONA FINISH (Kiri dan Kanan)
+    // Zona Kiri (Bagi yang nekat lewat Karet)
+    this.add.rectangle(100, 350, 150, 150, 0xff0000, 0.3); // Zona Merah
+    // Zona Kanan (Jalur Cerdas lewat Es)
+    this.add.rectangle(1180, 350, 150, 150, 0x00ff00, 0.3); // Zona Hijau
+
+    // 5. PENEMPATAN ROBOT & KOTAK DI TENGAH (UX TERBAIK)
+    // Kotak kayu agak ke kanan agar robot bisa mengambil posisi mendorong dari sisi mana pun
+    const kayuVisual = this.add.image(700, 600, 'kayu-sprite').setDisplaySize(50, 50);
+    kayu = this.matter.add.gameObject(kayuVisual, {
         shape: { type: 'rectangle', width: 50, height: 50 },
         mass: 0.5,
         friction: 0.1
     });
 
-    const robotVisual = this.add.image(50, 600, 'robot-sprite').setDisplaySize(50, 50);
-    robot = this.matter.add.gameObject(robotVisual, { // <-- HAPUS kata 'let' di sini
+    const robotVisual = this.add.image(580, 600, 'robot-sprite').setDisplaySize(50, 50);
+    robot = this.matter.add.gameObject(robotVisual, {
         shape: { type: 'rectangle', width: 50, height: 50 },
         mass: 1,
         friction: 0.05
-    }).setFixedRotation();
+    }).setFixedRotation(); 
 
-    // --- TAMBAHKAN KODE DI BAWAH INI SEBELUM KURUNG KURAWAL PENUTUP create() ---
-
-    // 6. KONTROL KEYBOARD & TOUCHSCREEN
-    cursors = this.input.keyboard.createCursorKeys();
-    this.input.addPointer(2); // Mengizinkan multi-touch
-
-    const btnLeft = this.add.rectangle(100, 600, 80, 80, 0xffffff, 0.5).setInteractive();
-    this.add.text(100, 600, '<', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
-    btnLeft.on('pointerdown', () => isLeftDown = true).on('pointerup', () => isLeftDown = false).on('pointerout', () => isLeftDown = false);
-
-    const btnRight = this.add.rectangle(200, 600, 80, 80, 0xffffff, 0.5).setInteractive();
-    this.add.text(200, 600, '>', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
-    btnRight.on('pointerdown', () => isRightDown = true).on('pointerup', () => isRightDown = false).on('pointerout', () => isRightDown = false);
-
-    const btnJump = this.add.rectangle(1180, 600, 80, 80, 0xffffff, 0.5).setInteractive();
-    this.add.text(1180, 600, '^', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
-    btnJump.on('pointerdown', () => isJumpDown = true)
-        .on('pointerup', () => isJumpDown = false)
-        .on('pointerout', () => isJumpDown = false);
-
-    // 5. TEKS MISI LEVEL 2
-    this.add.text(640, 100, "MISI: Dorong kotak kayu ke atas panggung abu-abu!\nPilih jalur yang paling mudah dilewati.", { 
+    // 6. TEKS MISI (Header UI)
+    const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
+    this.add.text(640, 50, "MISI: Dorong kotak ke salah satu zona kotak di atas!\nUji kemampuan gesekan (friction) benda.", { 
         fontSize: '24px', fill: '#ffffff', align: 'center' 
     }).setOrigin(0.5);
+
+    // --- KONTROL (Biarkan kode kontrol tombol HP dan Keyboard Anda di bawah sini) ---
+    cursors = this.input.keyboard.createCursorKeys();
+    this.input.addPointer(2);
+
+    const btnLeft = this.add.rectangle(100, 640, 80, 80, 0xffffff, 0.5).setInteractive(); // Y digeser sedikit ke bawah agar tidak menutupi teks
+    this.add.text(100, 640, '<', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
+    btnLeft.on('pointerdown', () => isLeftDown = true).on('pointerup', () => isLeftDown = false).on('pointerout', () => isLeftDown = false);
+
+    const btnRight = this.add.rectangle(200, 640, 80, 80, 0xffffff, 0.5).setInteractive();
+    this.add.text(200, 640, '>', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
+    btnRight.on('pointerdown', () => isRightDown = true).on('pointerup', () => isRightDown = false).on('pointerout', () => isRightDown = false);
+
+    const btnJump = this.add.rectangle(1180, 640, 80, 80, 0xffffff, 0.5).setInteractive();
+    this.add.text(1180, 640, '^', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
+    btnJump.on('pointerdown', () => isJumpDown = true).on('pointerup', () => isJumpDown = false).on('pointerout', () => isJumpDown = false);
 }
 function update() {
     const gayaDorong = 0.005; // Kekuatan dorongan robot
