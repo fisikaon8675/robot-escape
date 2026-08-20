@@ -1,4 +1,5 @@
-let robot; // Variabel global untuk robot
+let robot;
+let cursors; // Menangkap input keyboard
 
 const config = {
     type: Phaser.AUTO,
@@ -34,6 +35,7 @@ function create() {
     const groundVisual = this.add.rectangle(640, 700, 1280, 50, 0x228B22); 
     this.matter.add.gameObject(groundVisual, { 
         isStatic: true 
+        
     });
 
     // 2. MEMBUAT ROBOT (Karakter Utama)
@@ -46,8 +48,27 @@ function create() {
     });
 
     console.log("Lantai dan Robot berhasil dibuat!");
+    // (Tambahkan di baris paling bawah fungsi create)
+    cursors = this.input.keyboard.createCursorKeys();
 }
 
 function update() {
-    // Kosong untuk saat ini
+    // Memastikan robot dan keyboard sudah dimuat
+    if (!robot || !cursors) return;
+
+    const forceAmount = 0.002; // Besaran Gaya (F)
+
+    // Bergerak ke Kiri
+    if (cursors.left.isDown) {
+        robot.applyForce({ x: -forceAmount, y: 0 }); // Mendorong ke kiri (X negatif)
+    }
+    // Bergerak ke Kanan
+    else if (cursors.right.isDown) {
+        robot.applyForce({ x: forceAmount, y: 0 }); // Mendorong ke kanan (X positif)
+    }
+
+    // Melompat (Hanya bisa melompat jika kecepatan Y-nya mendekati 0 / sedang di lantai)
+    if (cursors.up.isDown && Math.abs(robot.body.velocity.y) < 0.1) {
+        robot.setVelocityY(-10); // Memberikan dorongan instan ke atas
+    }
 }
