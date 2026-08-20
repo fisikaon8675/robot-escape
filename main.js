@@ -48,6 +48,7 @@ function create() {
         restitution: 0.4,
         friction: 0.05,
         label: 'robot'
+        }).setFixedRotation();
     });
     // 3. MENAMBAHKAN RINTANGAN (Eksperimen Massa)
 
