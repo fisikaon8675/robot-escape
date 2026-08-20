@@ -27,8 +27,9 @@ const config = {
 const game = new Phaser.Game(config);
 
 function preload() {
-    // Memuat gambar ke dalam memori Phaser dengan nama kunci 'robot-sprite'
     this.load.image('robot-sprite', 'assets/robot.png');
+    this.load.image('kayu-sprite', 'assets/kayu.png');
+    this.load.image('besi-sprite', 'assets/besi.png');
 }
 
 function create() {
@@ -40,7 +41,7 @@ function create() {
     });
 
     // 2. MEMBUAT ROBOT (Karakter Utama)
-    const robotVisual = this.add.rectangle(200, 100, 50, 50, 0xFFD700);
+    const robotVisual = this.add.image(200, 100, 'robot-sprite').setDisplaySize(50, 50);
     robot = this.matter.add.gameObject(robotVisual, {
         mass: 1,
         restitution: 0.4,
@@ -51,7 +52,7 @@ function create() {
 
     // Balok Kayu (Ringan)
     // Posisi X: 500, Y: 600, Ukuran: 60x60, Warna: Coklat (0x8B4513)
-    const kayuVisual = this.add.rectangle(500, 600, 60, 60, 0x8B4513);
+    const kayuVisual = this.add.image(500, 600, 'kayu-sprite').setDisplaySize(60, 60);
     this.matter.add.gameObject(kayuVisual, {
         mass: 0.5,       // Setengah dari massa robot (Sangat ringan)
         friction: 0.05,  // Licin
@@ -60,7 +61,7 @@ function create() {
 
     // Balok Besi (Berat)
     // Posisi X: 800, Y: 600, Ukuran: 60x60, Warna: Abu-abu (0x808080)
-    const besiVisual = this.add.rectangle(800, 600, 60, 60, 0x808080);
+    const besiVisual = this.add.image(800, 600, 'besi-sprite').setDisplaySize(60, 60);
     this.matter.add.gameObject(besiVisual, {
         mass: 20,        // 20x lipat massa robot (Sangat berat!)
         friction: 0.6,   // Kasar (sulit digeser)
