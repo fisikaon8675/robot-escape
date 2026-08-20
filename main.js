@@ -107,7 +107,35 @@ function create() {
     // 5. MEMBUAT ZONA FINISH
     // Posisi X: 1200 (ujung kanan layar), Y: 600, Lebar: 100, Tinggi: 200, Warna: Hijau Transparan
     const finishZone = this.add.rectangle(1200, 600, 100, 200, 0x00ff00, 0.3);
+    // 6. MEMBUAT TOMBOL VIRTUAL UNTUK HP
+    // Tombol Kiri
+    const btnLeft = this.add.rectangle(100, 600, 80, 80, 0xffffff, 0.5).setInteractive();
+    this.add.text(100, 600, '<', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
 
+    // Tombol Kanan
+    const btnRight = this.add.rectangle(200, 600, 80, 80, 0xffffff, 0.5).setInteractive();
+    this.add.text(200, 600, '>', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
+
+    // Tombol Lompat
+    const btnJump = this.add.rectangle(1180, 600, 80, 80, 0xffffff, 0.5).setInteractive();
+    this.add.text(1180, 600, '^', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
+
+    // Event Listener (Mendeteksi sentuhan jari)
+    btnLeft.on('pointerdown', () => isLeftDown = true);
+    btnLeft.on('pointerup', () => isLeftDown = false);
+    btnLeft.on('pointerout', () => isLeftDown = false); // Jika jari tergeser keluar tombol
+
+    btnRight.on('pointerdown', () => isRightDown = true);
+    btnRight.on('pointerup', () => isRightDown = false);
+    btnRight.on('pointerout', () => isRightDown = false);
+
+    btnJump.on('pointerdown', () => isJumpDown = true);
+    btnJump.on('pointerup', () => isJumpDown = false);
+    btnJump.on('pointerout', () => isJumpDown = false);
+    
+    // Mengizinkan multi-touch (mendeteksi lebih dari 1 jari secara bersamaan)
+    this.input.addPointer(2);
+    
     cursors = this.input.keyboard.createCursorKeys();
 }
 
