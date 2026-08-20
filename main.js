@@ -46,7 +46,26 @@ function create() {
         friction: 0.05,
         label: 'robot'
     });
+    // 3. MENAMBAHKAN RINTANGAN (Eksperimen Massa)
 
+    // Balok Kayu (Ringan)
+    // Posisi X: 500, Y: 600, Ukuran: 60x60, Warna: Coklat (0x8B4513)
+    const kayuVisual = this.add.rectangle(500, 600, 60, 60, 0x8B4513);
+    this.matter.add.gameObject(kayuVisual, {
+        mass: 0.5,       // Setengah dari massa robot (Sangat ringan)
+        friction: 0.05,  // Licin
+        restitution: 0.2
+    });
+
+    // Balok Besi (Berat)
+    // Posisi X: 800, Y: 600, Ukuran: 60x60, Warna: Abu-abu (0x808080)
+    const besiVisual = this.add.rectangle(800, 600, 60, 60, 0x808080);
+    this.matter.add.gameObject(besiVisual, {
+        mass: 20,        // 20x lipat massa robot (Sangat berat!)
+        friction: 0.6,   // Kasar (sulit digeser)
+        restitution: 0.05
+    });
+    
     console.log("Lantai dan Robot berhasil dibuat!");
     // (Tambahkan di baris paling bawah fungsi create)
     cursors = this.input.keyboard.createCursorKeys();
