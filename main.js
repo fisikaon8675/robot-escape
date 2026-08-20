@@ -127,12 +127,39 @@ function update() {
         robot.setVelocityY(-10); // Memberikan dorongan instan ke atas
     }
     // DETEKSI KEMENANGAN
-    // Memeriksa apakah kayu DAN besi sudah melewati sumbu X 1150 (masuk zona hijau)
     if (!misiSelesai && kayu.x > 1150 && besi.x > 1150) {
-        misiSelesai = true; // Kunci agar kode ini hanya berjalan satu kali
-        console.log("Berhasil! Kedua kotak telah mencapai garis finish!");
+        misiSelesai = true; 
         
-        // (Nanti di tahap selanjutnya, kita memanggil layar penjelasan Newton di sini)
-        robot.setTint(0x00ff00); // Mengubah warna robot jadi hijau sementara sebagai tanda menang
+        // 1. Menghentikan simulasi fisika (waktu berhenti)
+        this.matter.world.pause(); 
+        
+        // 2. Membuat latar belakang gelap transparan (Dimmer) menutupi seluruh layar
+        this.add.rectangle(640, 360, 1280, 720, 0x000000, 0.85);
+        
+        // 3. Menulis Teks Penjelasan Hukum Newton
+        const materiNewton = "MISI SELESAI!\n\nMari evaluasi eksperimen kita:\n\n1. HUKUM NEWTON I (Kelembaman): Benda diam cenderung tetap diam. Besi sangat sulit digeser di awal karena massanya besar (inersianya tinggi).\n\n2. HUKUM NEWTON II (F = m.a): Dengan gaya dorong (F) yang sama dari robot, kayu yang ringan (m kecil) melesat lebih cepat (a besar) dibandingkan besi (m besar).\n\n3. HUKUM NEWTON III (Aksi-Reaksi): Saat robot mendorong kotak (aksi), kotak sebenarnya menahan/mendorong balik robot (reaksi) dengan gaya yang sama besar. Itu sebabnya robot Anda melambat saat menabrak balok berat!\n\nApakah Anda siap menguji pengetahuan ini?";
+        
+        this.add.text(640, 300, materiNewton, {
+            fontSize: '24px',
+            fill: '#ffffff',
+            align: 'left',
+            wordWrap: { width: 900 }, // Agar teks tidak keluar layar
+            lineSpacing: 10
+        }).setOrigin(0.5);
+
+        // 4. Membuat Tombol Interaktif "Lanjut ke Kuis"
+        const tombolKuis = this.add.text(640, 550, '[ MULA KUIS ]', {
+            fontSize: '32px',
+            fill: '#ffff00', // Warna kuning
+            fontStyle: 'bold',
+            backgroundColor: '#333333',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5).setInteractive(); // setInteractive() membuat teks bisa diklik layaknya tombol HTML
+
+        // 5. Logika saat tombol diklik (Akan dikerjakan di Tahap C)
+        tombolKuis.on('pointerdown', () => {
+            tombolKuis.setText("Memuat kuis...");
+            // Nanti kode kuis kita masukkan ke sini
+        });
     }
 }
