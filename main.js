@@ -3,6 +3,10 @@ let cursors; // Menangkap input keyboard
 let kayu;         // Untuk melacak posisi kayu
 let besi;         // Untuk melacak posisi besi
 let misiSelesai = false; // Mencegah kode kemenangan berjalan berkali-kali
+// Variabel untuk kontrol HP
+let isLeftDown = false;
+let isRightDown = false;
+let isJumpDown = false;
 
 const config = {
     type: Phaser.AUTO,
