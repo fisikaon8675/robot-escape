@@ -209,12 +209,26 @@ function update() {
 
                 opsi.on('pointerdown', () => {
                     if (apakahBenar) {
-                        opsi.setBackgroundColor('#00ff00'); // Berubah hijau jika benar
-                        this.add.text(640, 600, "BENAR! Portal Terbuka!", { fontSize: '36px', fill: '#00ff00', fontStyle: 'bold' }).setOrigin(0.5);
+                        opsi.setBackgroundColor('#00ff00'); 
+                        this.add.text(640, 580, "BENAR! Pemahaman yang luar biasa!", { 
+                            fontSize: '28px', fill: '#00ff00', fontStyle: 'bold' 
+                        }).setOrigin(0.5);
                         
-                        // (Nanti di Tahap D, kode Portal ditambahkan di sini)
+                        // 6. MEMBUAT TOMBOL PORTAL KE LEVEL 2
+                        const tombolLevel2 = this.add.text(640, 650, '[ MULA LEVEL 2 ]', {
+                            fontSize: '32px', fill: '#ffffff', backgroundColor: '#0000ff', // Warna biru portal
+                            padding: { x: 20, y: 10 }
+                        }).setOrigin(0.5).setInteractive();
+
+                        // Logika Pindah Halaman Web
+                        tombolLevel2.on('pointerdown', () => {
+                            tombolLevel2.setText("Membuka Portal...");
+                            window.location.href = 'level2.html'; // Mengarahkan browser ke file baru
+                        });
+                        
                     } else {
-                        opsi.setBackgroundColor('#ff0000'); // Berubah merah jika salah
+                        // (Biarkan kode else / jawaban salah tetap di sini)
+                        opsi.setBackgroundColor('#ff0000'); 
                         this.add.text(640, 600, "SALAH! Coba ingat Hukum Newton 1.", { fontSize: '24px', fill: '#ff0000' }).setOrigin(0.5);
                     }
                 });
