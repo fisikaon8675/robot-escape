@@ -1,3 +1,10 @@
+let robot;
+let kayu;
+let cursors;
+let isLeftDown = false;
+let isRightDown = false;
+let isJumpDown = false;
+
 const config = {
     type: Phaser.AUTO,
     scale: {
