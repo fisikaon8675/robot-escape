@@ -93,7 +93,9 @@ function create() {
 
     const btnJump = this.add.rectangle(1180, 600, 80, 80, 0xffffff, 0.5).setInteractive();
     this.add.text(1180, 600, '^', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
-    btnJump.on('pointerdown', () => isJumpDown = true).on('pointerup', () => isJumpDown = false).on('pointerout', () => isJumpDown = false); berguling
+    btnJump.on('pointerdown', () => isJumpDown = true)
+        .on('pointerup', () => isJumpDown = false)
+        .on('pointerout', () => isJumpDown = false);
 
     // 5. TEKS MISI LEVEL 2
     this.add.text(640, 100, "MISI: Dorong kotak kayu ke atas panggung abu-abu!\nPilih jalur yang paling mudah dilewati.", { 
@@ -113,7 +115,7 @@ function update() {
     }
 
     // Melompat (hanya bisa jika robot sedang menyentuh tanah/kecepatan Y mendekati 0)
-    if ((cursors.up.isDown || isJumpDown) && Math.abs(robot.body.velocity.y) < 0.1) {
+    if ((cursors.up.isDown || isJumpDown) && Math.abs(robot.body.velocity.y) < 0.5) {
         robot.setVelocityY(-10);
         isJumpDown = false; // Mencegah lompat terus-menerus
     }
