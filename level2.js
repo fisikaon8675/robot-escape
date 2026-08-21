@@ -180,22 +180,26 @@ this.robotVisual.setOrigin(0.5, 0.55);
     });
 }
 function update() {
-    const gayaDorong = 0.005; // Kekuatan dorongan robot
+    const gayaDorong = 0.008;
 
-    // Bergerak ke Kiri
-    if (cursors.left.isDown || isLeftDown) {
-        robot.applyForce({ x: -gayaDorong, y: 0 });
-        robot.setFlipX(true); // <--- Membalik gambar seperti cermin menghadap kiri
-    }
-    // Bergerak ke Kanan
-    else if (cursors.right.isDown || isRightDown) {
-        robot.applyForce({ x: gayaDorong, y: 0 });
-        robot.setFlipX(false); // <--- Membalik gambar ke kanan
-    }
+// Sinkronkan posisi dan rotasi gambar visual dengan badan fisika
+this.robotVisual.setPosition(this.badanRobot.position.x, this.badanRobot.position.y);
+this.robotVisual.setRotation(this.badanRobot.angle);
 
-    // Melompat (hanya bisa jika robot sedang menyentuh tanah/kecepatan Y mendekati 0)
-    if ((cursors.up.isDown || isJumpDown) && Math.abs(robot.body.velocity.y) < 0.5) {
-        robot.setVelocityY(-10);
-        isJumpDown = false; // Mencegah lompat terus-menerus
-    }
+// Gerak Kiri
+if (cursors.left.isDown || isLeftDown) {
+    Phaser.Physics.Matter.Matter.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: -gayaDorong, y: 0 });
+    this.robotVisual.setFlipX(true); // Membalik gambar tanpa mengubah skala fisika
+}
+// Gerak Kanan
+else if (cursors.right.isDown || isRightDown) {
+    Phaser.Physics.Matter.Matter.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: gayaDorong, y: 0 });
+    this.robotVisual.setFlipX(false);
+}
+
+// Melompat (Cek kecepatan vertikal badan)
+if ((cursors.up.isDown || isJumpDown) && Math.abs(this.badanRobot.velocity.y) < 0.5) {
+    Phaser.Physics.Matter.Matter.Body.setVelocity(this.badanRobot, { x: this.badanRobot.velocity.x, y: -10 });
+    isJumpDown = false;
+}
 }
