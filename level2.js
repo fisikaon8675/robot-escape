@@ -47,7 +47,8 @@ function create() {
     this.matter.add.gameObject(tanjakanKaret, { 
         isStatic: true, 
         angle: 0.5,    
-        friction: 0.8  // Gesekan sangat tinggi
+        friction: 5,         // Gesekan saat bergerak dinaikkan jadi 5!
+        frictionStatic: 10   // Gesekan awal (sangat sulit digerakkan dari posisi diam)
     });
     // UI Label Karet
     this.add.text(300, 620, "⚠️ JALUR KARET\nSangat Kasar!", { 
@@ -91,7 +92,8 @@ function create() {
         },
         chamfer: { radius: 20 }, // <--- INI TRIK RAHASIANYA! Membuat sudut membulat dengan radius 20px
         mass: 1,
-        friction: 0.05
+        friction: 5,         // Samakan dengan karet
+        frictionStatic: 10   // Samakan dengan karet
     }).setFixedRotation(); // <--- Kunci lagi agar tidak berguling
 
     // 6. TEKS MISI (Header UI)
