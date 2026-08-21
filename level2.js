@@ -84,60 +84,57 @@ function create() {
     });  // <-- TAMBAHKAN INI! (Agar kayu murni meluncur, bukan terguling)
     
     // 6. MERAKIT KERANGKA GABUNGAN ROBOT
-  // --- 1. BUAT POTONGAN TERPISAH (TIDAK DILAS) ---
-    const M = Phaser.Physics.Matter.Matter;
+  const M = Phaser.Physics.Matter.Matter;
 
-    // Buat badan di posisi X: 580, Y: 600
-    const badan = M.Bodies.rectangle(580, 600, 48, 35, { 
-        mass: 5,
-        collisionFilter: { group: -1 } // <--- TAMBAHKAN INI (Satu keluarga)
-    }); 
-    
-    // Buat roda terpisah (Friction dinaikkan agar rodanya menggigit jalan)
-    const rodaKiri = M.Bodies.circle(565, 615, 8, { 
-      friction: 0.8, 
-        mass: 10,
-        collisionFilter: { group: -1 } // <--- TAMBAHKAN INI
-    });
-    const rodaKanan = M.Bodies.circle(595, 615, 8, { 
-        friction: 0.8, 
-        mass: 10,
-        collisionFilter: { group: -1 } // <--- TAMBAHKAN INI                                            
-    });
+// 1. BADAN ROBOT (Massa disesuaikan)
+const badan = M.Bodies.rectangle(580, 600, 50, 35, { 
+    mass: 5,
+    collisionFilter: { group: -1 }
+}); 
 
-    // --- 2. PASANG AS RODA (ENGSEL / CONSTRAINT) ---
-    const engselKiri = M.Constraint.create({
-        bodyA: badan,
-        pointA: { x: -15, y: 15 }, // Dibor di kiri bawah badan
-        bodyB: rodaKiri,
-        pointB: { x: 0, y: 0 },    // Ditempel ke pusat roda kiri
-        stiffness: 1,              // Engsel kaku (tidak melar)
-        length: 0                  // Jarak tempel rapat
-    });
+// Turunkan Pusat Massa (Center of Mass) ke arah bawah sasis
+M.Body.setCentre(badan, { x: 0, y: 12 }, true);
 
-    const engselKanan = M.Constraint.create({
-        bodyA: badan,
-        pointA: { x: 15, y: 15 },  // Dibor di kanan bawah badan
-        bodyB: rodaKanan,
-        pointB: { x: 0, y: 0 },    // Ditempel ke pusat roda kanan
-        stiffness: 1,
-        length: 0
-    });
+// 2. RODA (Lebih berat dari badan sebagai pemberat bawah & sumbu lebih lebar)
+const rodaKiri = M.Bodies.circle(560, 615, 8, { 
+    friction: 0.8, 
+    mass: 8,
+    collisionFilter: { group: -1 }
+});
+const rodaKanan = M.Bodies.circle(600, 615, 8, { 
+    friction: 0.8, 
+    mass: 8,
+    collisionFilter: { group: -1 }
+});
 
-    // Masukkan semua mesin ini ke dalam dunia game
-    this.matter.world.add([badan, rodaKiri, rodaKanan, engselKiri, engselKanan]);
+// 3. ENGSEL (Stiffness diturunkan sedikit ke 0.9 agar elastis)
+const engselKiri = M.Constraint.create({
+    bodyA: badan,
+    pointA: { x: -20, y: 15 },
+    bodyB: rodaKiri,
+    pointB: { x: 0, y: 0 },
+    stiffness: 0.9,
+    length: 0
+});
 
-    // --- 3. PASANG GAMBAR HANYA KE BADAN ---
-    const robotVisual = this.add.image(580, 600, 'robot-sprite');
-    robotVisual.setScale(0.32); 
+const engselKanan = M.Constraint.create({
+    bodyA: badan,
+    pointA: { x: 20, y: 15 },
+    bodyB: rodaKanan,
+    pointB: { x: 0, y: 0 },
+    stiffness: 0.9,
+    length: 0
+});
 
-    // Ubah gambar menjadi objek Matter dan tempelkan HANYA ke 'badan'
-    robot = this.matter.add.gameObject(robotVisual);
-    robot.setExistingBody(badan);
-    robot.setOrigin(0.5, 0.55);
+this.matter.world.add([badan, rodaKiri, rodaKanan, engselKiri, engselKanan]);
 
-    // KUNCI ROTASI BADAN (Rodanya tetap akan berputar bebas di bawahnya!)
-    //robot.setFixedRotation();
+// Simpan referensi ke variabel scene
+this.badanRobot = badan;
+
+// 4. SPRITE VISUAL TERPISAH (Bebas di-flip tanpa merusak sistem fisika)
+this.robotVisual = this.add.image(580, 600, 'robot-sprite').setScale(0.32);
+this.robotVisual.setOrigin(0.5, 0.55);
+
 
     // 8. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
