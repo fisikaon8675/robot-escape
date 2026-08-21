@@ -47,8 +47,8 @@ function create() {
     this.matter.add.gameObject(tanjakanKaret, { 
         isStatic: true, 
         angle: 0.5,    
-        friction: 5,         // Gesekan saat bergerak dinaikkan jadi 5!
-        frictionStatic: 10   // Gesekan awal (sangat sulit digerakkan dari posisi diam)
+        friction: 20,         // Gesekan saat bergerak dinaikkan jadi 5!
+        frictionStatic: 30   // Gesekan awal (sangat sulit digerakkan dari posisi diam)
     });
     // UI Label Karet
     this.add.text(300, 620, "⚠️ JALUR KARET\nSangat Kasar!", { 
@@ -61,7 +61,8 @@ function create() {
     this.matter.add.gameObject(tanjakanEs, { 
         isStatic: true, 
         angle: -0.5,   
-        friction: 0.005 // Sangat licin (hampir nol)
+        friction: 0.0008, // Sangat licin (hampir nol)
+        frictionStatic: 0.001
     });
     // UI Label Es
     this.add.text(980, 620, "❄️ JALUR ES\nSangat Licin!", { 
@@ -74,14 +75,14 @@ function create() {
     // Zona Kanan (Jalur Cerdas lewat Es)
     this.add.rectangle(1180, 350, 150, 150, 0x00ff00, 0.3); // Zona Hijau
 
-    // 5. PENEMPATAN ROBOT & KOTAK DI TENGAH (UX TERBAIK)
+    // 5.KAYU
     // Kotak kayu agak ke kanan agar robot bisa mengambil posisi mendorong dari sisi mana pun
     const kayuVisual = this.add.image(700, 600, 'kayu-sprite').setDisplaySize(50, 50);
     kayu = this.matter.add.gameObject(kayuVisual, {
         shape: { type: 'rectangle', width: 50, height: 50 },
         mass: 0.5,
-        friction: 5,         // Samakan dengan karet
-        frictionStatic: 10
+        friction: 20,         // Samakan dengan karet
+        frictionStatic: 30
     });
     
     // 6. MERAKIT KERANGKA GABUNGAN (COMPOUND BODY) ---
