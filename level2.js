@@ -122,10 +122,12 @@ function update() {
     // Bergerak ke Kiri
     if (cursors.left.isDown || isLeftDown) {
         robot.applyForce({ x: -gayaDorong, y: 0 });
+        robot.setFlipX(true); // <--- Membalik gambar seperti cermin menghadap kiri
     }
     // Bergerak ke Kanan
     else if (cursors.right.isDown || isRightDown) {
         robot.applyForce({ x: gayaDorong, y: 0 });
+        robot.setFlipX(false); // <--- Membalik gambar ke kanan
     }
 
     // Melompat (hanya bisa jika robot sedang menyentuh tanah/kecepatan Y mendekati 0)
