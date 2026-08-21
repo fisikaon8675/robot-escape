@@ -86,36 +86,51 @@ function create() {
     });
     
     // 6. MERAKIT KERANGKA GABUNGAN ROBOT
-  // --- 1. BUAT KERANGKA KECIL (Target Presisi ~50px) ---
+  // --- 1. BUAT POTONGAN TERPISAH (TIDAK DILAS) ---
     const M = Phaser.Physics.Matter.Matter;
 
-    // Kerangka mungil yang pas untuk arena
-    const badan = M.Bodies.rectangle(0, -5, 48, 35); 
-    const rodaKiri = M.Bodies.circle(-15, 15, 8);
-    const rodaKanan = M.Bodies.circle(15, 15, 8);
+    // Buat badan di posisi X: 580, Y: 600
+    const badan = M.Bodies.rectangle(580, 600, 48, 35, { 
+        mass: 1 
+    }); 
+    
+    // Buat roda terpisah (Friction dinaikkan agar rodanya menggigit jalan)
+    const rodaKiri = M.Bodies.circle(565, 615, 8, { friction: 0.8, mass: 0.1 });
+    const rodaKanan = M.Bodies.circle(595, 615, 8, { friction: 0.8, mass: 0.1 });
 
-    const robotCompoundBody = M.Body.create({
-        parts: [badan, rodaKiri, rodaKanan],
-        mass: 1,
-        friction: 0.05
+    // --- 2. PASANG AS RODA (ENGSEL / CONSTRAINT) ---
+    const engselKiri = M.Constraint.create({
+        bodyA: badan,
+        pointA: { x: -15, y: 15 }, // Dibor di kiri bawah badan
+        bodyB: rodaKiri,
+        pointB: { x: 0, y: 0 },    // Ditempel ke pusat roda kiri
+        stiffness: 1,              // Engsel kaku (tidak melar)
+        length: 0                  // Jarak tempel rapat
     });
 
-    // --- 2. TAMPILKAN GAMBAR DAN KECILKAN DULUAN ---
-    // Kita panggil gambar aslinya (158x146) sebagai image biasa
+    const engselKanan = M.Constraint.create({
+        bodyA: badan,
+        pointA: { x: 15, y: 15 },  // Dibor di kanan bawah badan
+        bodyB: rodaKanan,
+        pointB: { x: 0, y: 0 },    // Ditempel ke pusat roda kanan
+        stiffness: 1,
+        length: 0
+    });
+
+    // Masukkan semua mesin ini ke dalam dunia game
+    this.matter.world.add([badan, rodaKiri, rodaKanan, engselKiri, engselKanan]);
+
+    // --- 3. PASANG GAMBAR HANYA KE BADAN ---
     const robotVisual = this.add.image(580, 600, 'robot-sprite');
-    
-    // Kecilkan gambarnya SAJA sebesar 32% (menjadi sekitar 50px)
     robotVisual.setScale(0.32); 
 
-    // --- 3. GABUNGKAN GAMBAR KECIL DENGAN KERANGKA KECIL ---
-    // Ubah gambar biasa tadi menjadi objek fisika Matter
+    // Ubah gambar menjadi objek Matter dan tempelkan HANYA ke 'badan'
     robot = this.matter.add.gameObject(robotVisual);
-    
-    // Suntikkan kerangka mungil kita ke dalam gambar yang sudah dikecilkan
-    robot.setExistingBody(robotCompoundBody);
-    
-    // Geser sedikit visualnya ke atas agar perut robot pas di atas roda hijau
+    robot.setExistingBody(badan);
     robot.setOrigin(0.5, 0.55);
+
+    // KUNCI ROTASI BADAN (Rodanya tetap akan berputar bebas di bawahnya!)
+    robot.setFixedRotation();
 
     // 8. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
