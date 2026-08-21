@@ -42,13 +42,12 @@ function create() {
     this.matter.add.gameObject(lantai, { isStatic: true, friction: 0.1 });
 
     // 2. DESAIN TANJAKAN KARET (KIRI) - KASAR & GELAP
-    // Posisi X di 300, miring ke kiri atas
     const tanjakanKaret = this.add.rectangle(300, 550, 600, 25, 0x3a2f2f);
     this.matter.add.gameObject(tanjakanKaret, { 
         isStatic: true, 
         angle: 0.5,    
-        friction: 20,         // Gesekan saat bergerak dinaikkan jadi 5!
-        frictionStatic: 30   // Gesekan awal (sangat sulit digerakkan dari posisi diam)
+        friction: 1,        // <-- UBAH KE 1 (Batas maksimal kasar di Matter.js)
+        frictionStatic: 10  // Ini boleh tinggi agar butuh tenaga ekstra untuk mulai bergerak
     });
     // UI Label Karet
     this.add.text(300, 620, "⚠️ JALUR KARET\nSangat Kasar!", { 
@@ -75,15 +74,14 @@ function create() {
     // Zona Kanan (Jalur Cerdas lewat Es)
     this.add.rectangle(1180, 350, 150, 150, 0x00ff00, 0.3); // Zona Hijau
 
-    // 5.KAYU
-    // Kotak kayu agak ke kanan agar robot bisa mengambil posisi mendorong dari sisi mana pun
+   // 5. KAYU
     const kayuVisual = this.add.image(700, 600, 'kayu-sprite').setDisplaySize(50, 50);
     kayu = this.matter.add.gameObject(kayuVisual, {
         shape: { type: 'rectangle', width: 50, height: 50 },
         mass: 0.5,
-        friction: 20,         // Samakan dengan karet
-        frictionStatic: 30
-    });
+        friction: 1,        // <-- SAMAKAN JADI 1
+        frictionStatic: 10
+    }).setFixedRotation();  // <-- TAMBAHKAN INI! (Agar kayu murni meluncur, bukan terguling)
     
     // 6. MERAKIT KERANGKA GABUNGAN ROBOT
   // --- 1. BUAT POTONGAN TERPISAH (TIDAK DILAS) ---
