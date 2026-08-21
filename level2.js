@@ -112,13 +112,14 @@ function create() {
     // --- 3. TRIK MENYELARASKAN VISUAL (PENTING!) ---
     // JANGAN PAKAI setDisplaySize() KARENA AKAN MERUSAK FISIKA BENTUK RODA!
     
-    // Jika gambar asli Abang kebesaran/kekecilan dibanding garis hijaunya, gunakan setScale:
-    // Contoh: 1 (ukuran asli), 0.5 (setengah lebih kecil), 1.2 (lebih besar sedikit)
-    robot.setScale(1); 
+    // Pasang kerangka fisika ke sprite
+    robot.setExistingBody(robotCompoundBody);
 
-    // Trik menggeser gambar agar pas dengan kerangka hijau:
-    // Jika posisi gambar masih "melenceng" (kurang naik/turun) dari garis hijau, 
-    // ubah angka Y (0.55) di bawah ini perlahan (misal ke 0.5, 0.6, atau 0.65) sampai gambarnya pas membungkus kerangka!
+    // KECILKAN GAMBAR (32% dari 158x146 = sekitar 50x46 piksel)
+    robot.setScale(0.32); 
+
+    // Sesuaikan sedikit posisi Y (agar perutnya pas di atas roda)
+    // Coba angka 0.55 atau 0.6 jika gambarnya masih terasa kurang turun/naik
     robot.setOrigin(0.5, 0.55);
 
     // 8. TEKS MISI (Header UI)
