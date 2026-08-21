@@ -84,10 +84,15 @@ function create() {
 
     const robotVisual = this.add.image(580, 600, 'robot-sprite').setDisplaySize(50, 50);
     robot = this.matter.add.gameObject(robotVisual, {
-        shape: { type: 'rectangle', width: 50, height: 50 },
+        shape: { 
+            type: 'rectangle', 
+            width: 50, 
+            height: 50 
+        },
+        chamfer: { radius: 20 }, // <--- INI TRIK RAHASIANYA! Membuat sudut membulat dengan radius 20px
         mass: 1,
         friction: 0.05
-    }).setFixedRotation(); 
+    }).setFixedRotation(); // <--- Kunci lagi agar tidak berguling
 
     // 6. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
