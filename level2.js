@@ -93,9 +93,8 @@ function create() {
         },
         chamfer: { radius: 20 }, // <--- INI TRIK RAHASIANYA! Membuat sudut membulat dengan radius 20px
         mass: 1,
-        friction: 5,         // Samakan dengan karet
-        frictionStatic: 10   // Samakan dengan karet
-    }); 
+        friction: 0.05,         
+    }).setFixedRotation(); 
 
     // 6. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
