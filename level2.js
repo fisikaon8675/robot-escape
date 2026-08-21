@@ -180,26 +180,28 @@ this.robotVisual.setOrigin(0.5, 0.55);
     });
 }
 function update() {
-    const gayaDorong = 0.008;
+    // --- DI DALAM FUNCTION UPDATE() ---
 
-// Sinkronkan posisi dan rotasi gambar visual dengan badan fisika
+const gayaDorong = 0.008;
+
+// Sinkronkan visual
 this.robotVisual.setPosition(this.badanRobot.position.x, this.badanRobot.position.y);
 this.robotVisual.setRotation(this.badanRobot.angle);
 
-// Gerak Kiri
+// Kontrol Kiri / Kanan
 if (cursors.left.isDown || isLeftDown) {
     Phaser.Physics.Matter.Matter.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: -gayaDorong, y: 0 });
-    this.robotVisual.setFlipX(true); // Membalik gambar tanpa mengubah skala fisika
+    this.robotVisual.setFlipX(true);
 }
-// Gerak Kanan
 else if (cursors.right.isDown || isRightDown) {
     Phaser.Physics.Matter.Matter.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: gayaDorong, y: 0 });
     this.robotVisual.setFlipX(false);
 }
 
-// Melompat (Cek kecepatan vertikal badan)
+// Lompat
 if ((cursors.up.isDown || isJumpDown) && Math.abs(this.badanRobot.velocity.y) < 0.5) {
     Phaser.Physics.Matter.Matter.Body.setVelocity(this.badanRobot, { x: this.badanRobot.velocity.x, y: -10 });
     isJumpDown = false;
 }
+
 }
