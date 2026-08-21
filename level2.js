@@ -81,7 +81,7 @@ function create() {
         mass: 0.5,
         friction: 1,        // <-- SAMAKAN JADI 1
         frictionStatic: 10
-    }).setFixedRotation();  // <-- TAMBAHKAN INI! (Agar kayu murni meluncur, bukan terguling)
+    });  // <-- TAMBAHKAN INI! (Agar kayu murni meluncur, bukan terguling)
     
     // 6. MERAKIT KERANGKA GABUNGAN ROBOT
   // --- 1. BUAT POTONGAN TERPISAH (TIDAK DILAS) ---
@@ -137,7 +137,7 @@ function create() {
     robot.setOrigin(0.5, 0.55);
 
     // KUNCI ROTASI BADAN (Rodanya tetap akan berputar bebas di bawahnya!)
-    robot.setFixedRotation();
+    //robot.setFixedRotation();
 
     // 8. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
