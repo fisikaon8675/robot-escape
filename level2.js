@@ -85,31 +85,32 @@ function create() {
     });
     
     // 6. MERAKIT KERANGKA GABUNGAN (COMPOUND BODY) ---
+    // --- MERAKIT KERANGKA RODA (COMPOUND BODY) YANG PRESISI ---
     const M = Phaser.Physics.Matter.Matter;
 
-    const badan = M.Bodies.rectangle(0, -5, 50, 30); 
-    const rodaKiri = M.Bodies.circle(-15, 15, 10);
-    const rodaKanan = M.Bodies.circle(15, 15, 10);
+    // Hitungan Presisi untuk gambar 50x50:
+    // Badan: Lebar 48, Tinggi 30. Titik tengah digeser ke atas (-10)
+    const badan = M.Bodies.rectangle(0, -10, 48, 30); 
+    
+    // Roda: Radius 10. Titik tengah digeser ke bawah (15), dan ke kiri/kanan (-15 dan 15)
+    const rodaKiri = M.Bodies.circle(-15, 15, 10);    
+    const rodaKanan = M.Bodies.circle(15, 15, 10);    
 
     const robotCompoundBody = M.Body.create({
         parts: [badan, rodaKiri, rodaKanan],
         mass: 1,
         friction: 0.05
     });
+    // (JANGAN pakai setFixedRotation agar robot tetap bisa miring di tanjakan!)
 
-    // 7. MEMASANG GAMBAR PNG SEBAGAI TOPENG (KAMUFLASE) ---
-    // Kita gunakan .sprite agar animasi dan gambar PNG terbaca sempurna
+    // --- MEMASANG GAMBAR PNG ---
     robot = this.matter.add.sprite(580, 600, 'robot-sprite');
     
-    // Masukkan kerangka mobilnya ke dalam gambar robot
+    // Masukkan kerangka mobilnya
     robot.setExistingBody(robotCompoundBody);
     
-    // PENTING: Atur ulang ukuran gambar SETELAH kerangka dipasang agar tidak error
+    // Kunci ukuran gambar ke 50x50 SETELAH tulang dipasang
     robot.setDisplaySize(50, 50); 
-    
-    // Menggeser titik tengah gambar ke atas sedikit (Origin Y = 0.6) 
-    // agar gambar PNG-nya pas menutupi roda di bagian bawah
-    robot.setOrigin(0.5, 0.6);
 
     // 8. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
