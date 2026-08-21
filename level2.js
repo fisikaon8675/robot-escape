@@ -80,7 +80,8 @@ function create() {
     kayu = this.matter.add.gameObject(kayuVisual, {
         shape: { type: 'rectangle', width: 50, height: 50 },
         mass: 0.5,
-        friction: 1
+        friction: 5,         // Samakan dengan karet
+        frictionStatic: 10
     });
     
     // ROBOT
