@@ -89,19 +89,19 @@ function create() {
 
     // Buat badan di posisi X: 580, Y: 600
     const badan = M.Bodies.rectangle(580, 600, 48, 35, { 
-        mass: 0.1,
+        mass: 5,
         collisionFilter: { group: -1 } // <--- TAMBAHKAN INI (Satu keluarga)
     }); 
     
     // Buat roda terpisah (Friction dinaikkan agar rodanya menggigit jalan)
     const rodaKiri = M.Bodies.circle(565, 615, 8, { 
       friction: 0.8, 
-        mass: 5,
+        mass: 10,
         collisionFilter: { group: -1 } // <--- TAMBAHKAN INI
     });
     const rodaKanan = M.Bodies.circle(595, 615, 8, { 
         friction: 0.8, 
-        mass: 5,
+        mass: 10,
         collisionFilter: { group: -1 } // <--- TAMBAHKAN INI                                            
     });
 
