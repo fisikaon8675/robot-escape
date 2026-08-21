@@ -85,32 +85,26 @@ function create() {
     });
     
     // 6. MERAKIT KERANGKA GABUNGAN (COMPOUND BODY) ---
-    // --- MERAKIT KERANGKA RODA (COMPOUND BODY) YANG PRESISI ---
+    // --- 1. MERAKIT KERANGKA GABUNGAN ---
     const M = Phaser.Physics.Matter.Matter;
 
-    // Hitungan Presisi untuk gambar 50x50:
-    // Badan: Lebar 48, Tinggi 30. Titik tengah digeser ke atas (-10)
+    // Matematika dikembalikan ke angka simetris agar Pusat Gravitasi pas di tengah
     const badan = M.Bodies.rectangle(0, -10, 48, 30); 
-    
-    // Roda: Radius 10. Titik tengah digeser ke bawah (15), dan ke kiri/kanan (-15 dan 15)
-    const rodaKiri = M.Bodies.circle(-15, 15, 10);    
-    const rodaKanan = M.Bodies.circle(15, 15, 10);    
+    const rodaKiri = M.Bodies.circle(-15, 15, 10);
+    const rodaKanan = M.Bodies.circle(15, 15, 10);
 
     const robotCompoundBody = M.Body.create({
         parts: [badan, rodaKiri, rodaKanan],
         mass: 1,
         friction: 0.05
     });
-    // (JANGAN pakai setFixedRotation agar robot tetap bisa miring di tanjakan!)
 
-    // --- MEMASANG GAMBAR PNG ---
+    // --- 2. MEMASANG GAMBAR PNG ---
     robot = this.matter.add.sprite(580, 600, 'robot-sprite');
     
-    // Masukkan kerangka mobilnya
+    // Pasang kerangka ke gambar
     robot.setExistingBody(robotCompoundBody);
-    
-    // Kunci ukuran gambar ke 50x50 SETELAH tulang dipasang
-    robot.setDisplaySize(50, 50); 
+    robot.setScale(1);
 
     // 8. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
