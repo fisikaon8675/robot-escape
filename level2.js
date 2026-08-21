@@ -85,13 +85,17 @@ function create() {
     });
     
     // 6. MERAKIT KERANGKA GABUNGAN (COMPOUND BODY) ---
-    // --- 1. MERAKIT KERANGKA GABUNGAN ---
+   // --- 1. MERAKIT KERANGKA GABUNGAN SESUAI SKETSA ---
     const M = Phaser.Physics.Matter.Matter;
 
-    // Matematika dikembalikan ke angka simetris agar Pusat Gravitasi pas di tengah
-    const badan = M.Bodies.rectangle(0, -10, 48, 30); 
-    const rodaKiri = M.Bodies.circle(-15, 15, 10);
-    const rodaKanan = M.Bodies.circle(15, 15, 10);
+    // Kotak atas: lebar 48, tinggi 35. 
+    // Y di-set ke -5 agar pusat gravitasinya (titik hijau) agak turun ke bawah perut.
+    const badan = M.Bodies.rectangle(0, -5, 48, 35); 
+
+    // Roda kiri & kanan: jari-jari 8 (agar tidak terlalu besar).
+    // Y di-set ke 15 agar posisinya pas di bawah kotak.
+    const rodaKiri = M.Bodies.circle(-15, 15, 8);
+    const rodaKanan = M.Bodies.circle(15, 15, 8);
 
     const robotCompoundBody = M.Body.create({
         parts: [badan, rodaKiri, rodaKanan],
@@ -99,12 +103,23 @@ function create() {
         friction: 0.05
     });
 
-    // --- 2. MEMASANG GAMBAR PNG ---
+    // --- 2. MEMASANG GAMBAR KE KERANGKA ---
     robot = this.matter.add.sprite(580, 600, 'robot-sprite');
     
-    // Pasang kerangka ke gambar
+    // Pasang kerangka fisika ke sprite
     robot.setExistingBody(robotCompoundBody);
-    robot.setScale(1);
+
+    // --- 3. TRIK MENYELARASKAN VISUAL (PENTING!) ---
+    // JANGAN PAKAI setDisplaySize() KARENA AKAN MERUSAK FISIKA BENTUK RODA!
+    
+    // Jika gambar asli Abang kebesaran/kekecilan dibanding garis hijaunya, gunakan setScale:
+    // Contoh: 1 (ukuran asli), 0.5 (setengah lebih kecil), 1.2 (lebih besar sedikit)
+    robot.setScale(1); 
+
+    // Trik menggeser gambar agar pas dengan kerangka hijau:
+    // Jika posisi gambar masih "melenceng" (kurang naik/turun) dari garis hijau, 
+    // ubah angka Y (0.55) di bawah ini perlahan (misal ke 0.5, 0.6, atau 0.65) sampai gambarnya pas membungkus kerangka!
+    robot.setOrigin(0.5, 0.55);
 
     // 8. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
