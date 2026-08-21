@@ -79,7 +79,7 @@ function create() {
     kayu = this.matter.add.gameObject(kayuVisual, {
         shape: { type: 'rectangle', width: 50, height: 50 },
         mass: 0.5,
-        friction: 0.1
+        friction: 1
     });
 
     const robotVisual = this.add.image(580, 600, 'robot-sprite').setDisplaySize(50, 50);
