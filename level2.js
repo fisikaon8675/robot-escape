@@ -86,15 +86,13 @@ function create() {
     });
     
     // 6. MERAKIT KERANGKA GABUNGAN ROBOT
-   // --- 1. Kerangka Robot
+  // --- 1. BUAT KERANGKA KECIL (Target Presisi ~50px) ---
     const M = Phaser.Physics.Matter.Matter;
 
-    // Badan: Lebar 150, Tinggi 100, digeser ke atas sedikit (-15)
-    const badan = M.Bodies.rectangle(0, -15, 150, 100); 
-    
-    // Roda: Radius 24, digeser ke bawah (45) dan ke kiri/kanan (-45 & 45)
-    const rodaKiri = M.Bodies.circle(-45, 45, 24);
-    const rodaKanan = M.Bodies.circle(45, 45, 24);
+    // Kerangka mungil yang pas untuk arena
+    const badan = M.Bodies.rectangle(0, -5, 48, 35); 
+    const rodaKiri = M.Bodies.circle(-15, 15, 8);
+    const rodaKanan = M.Bodies.circle(15, 15, 8);
 
     const robotCompoundBody = M.Body.create({
         parts: [badan, rodaKiri, rodaKanan],
@@ -102,13 +100,22 @@ function create() {
         friction: 0.05
     });
 
-    // --- 2. PASANG & KECILKAN BERSAMAAN ---
-    robot = this.matter.add.sprite(580, 600, 'robot-sprite');
+    // --- 2. TAMPILKAN GAMBAR DAN KECILKAN DULUAN ---
+    // Kita panggil gambar aslinya (158x146) sebagai image biasa
+    const robotVisual = this.add.image(580, 600, 'robot-sprite');
+    
+    // Kecilkan gambarnya SAJA sebesar 32% (menjadi sekitar 50px)
+    robotVisual.setScale(0.32); 
+
+    // --- 3. GABUNGKAN GAMBAR KECIL DENGAN KERANGKA KECIL ---
+    // Ubah gambar biasa tadi menjadi objek fisika Matter
+    robot = this.matter.add.gameObject(robotVisual);
+    
+    // Suntikkan kerangka mungil kita ke dalam gambar yang sudah dikecilkan
     robot.setExistingBody(robotCompoundBody);
     
-    // Karena sekarang Gambar dan Fisikanya sama-sama raksasa (Skala 1:1),
-    // kita bisa mengecilkannya bersamaan ke ukuran yang Abang mau dengan aman!
-    robot.setScale(0.32);
+    // Geser sedikit visualnya ke atas agar perut robot pas di atas roda hijau
+    robot.setOrigin(0.5, 0.55);
 
     // 8. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
