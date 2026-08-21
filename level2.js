@@ -82,7 +82,8 @@ function create() {
         mass: 0.5,
         friction: 1
     });
-
+    
+    // ROBOT
     const robotVisual = this.add.image(580, 600, 'robot-sprite').setDisplaySize(50, 50);
     robot = this.matter.add.gameObject(robotVisual, {
         shape: { 
@@ -94,7 +95,7 @@ function create() {
         mass: 1,
         friction: 5,         // Samakan dengan karet
         frictionStatic: 10   // Samakan dengan karet
-    }).setFixedRotation(); // <--- Kunci lagi agar tidak berguling
+    }); 
 
     // 6. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
