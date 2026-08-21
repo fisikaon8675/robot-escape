@@ -84,20 +84,34 @@ function create() {
         frictionStatic: 10
     });
     
-    // ROBOT
-    const robotVisual = this.add.image(580, 600, 'robot-sprite').setDisplaySize(50, 50);
-    robot = this.matter.add.gameObject(robotVisual, {
-        shape: { 
-            type: 'rectangle', 
-            width: 50, 
-            height: 50 
-        },
-        chamfer: { radius: 20 }, // <--- INI TRIK RAHASIANYA! Membuat sudut membulat dengan radius 20px
-        mass: 1,
-        friction: 0.05,         
-    }).setFixedRotation(); 
+    // 6. MERAKIT KERANGKA GABUNGAN (COMPOUND BODY) ---
+    const M = Phaser.Physics.Matter.Matter;
 
-    // 6. TEKS MISI (Header UI)
+    const badan = M.Bodies.rectangle(0, -5, 50, 30); 
+    const rodaKiri = M.Bodies.circle(-15, 15, 10);
+    const rodaKanan = M.Bodies.circle(15, 15, 10);
+
+    const robotCompoundBody = M.Body.create({
+        parts: [badan, rodaKiri, rodaKanan],
+        mass: 1,
+        friction: 0.05
+    });
+
+    // 7. MEMASANG GAMBAR PNG SEBAGAI TOPENG (KAMUFLASE) ---
+    // Kita gunakan .sprite agar animasi dan gambar PNG terbaca sempurna
+    robot = this.matter.add.sprite(580, 600, 'robot-sprite');
+    
+    // Masukkan kerangka mobilnya ke dalam gambar robot
+    robot.setExistingBody(robotCompoundBody);
+    
+    // PENTING: Atur ulang ukuran gambar SETELAH kerangka dipasang agar tidak error
+    robot.setDisplaySize(50, 50); 
+    
+    // Menggeser titik tengah gambar ke atas sedikit (Origin Y = 0.6) 
+    // agar gambar PNG-nya pas menutupi roda di bagian bawah
+    robot.setOrigin(0.5, 0.6);
+
+    // 8. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
     this.add.text(640, 50, "MISI: Dorong kotak ke salah satu zona kotak di atas!\nUji kemampuan gesekan (friction) benda.", { 
         fontSize: '24px', fill: '#ffffff', align: 'center' 
@@ -119,7 +133,7 @@ function create() {
     this.add.text(1180, 640, '^', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
     btnJump.on('pointerdown', () => isJumpDown = true).on('pointerup', () => isJumpDown = false).on('pointerout', () => isJumpDown = false);
 
-    // 7. TOMBOL RESET POSISI (Pojok Kanan Atas)
+    // 9. TOMBOL RESET POSISI (Pojok Kanan Atas)
     const tombolReset = this.add.text(1150, 50, '🔄 RESET', {
         fontSize: '24px',
         fill: '#ffffff',
