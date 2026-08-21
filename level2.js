@@ -115,6 +115,27 @@ function create() {
     const btnJump = this.add.rectangle(1180, 640, 80, 80, 0xffffff, 0.5).setInteractive();
     this.add.text(1180, 640, '^', { fontSize: '50px', fill: '#000000', fontStyle: 'bold' }).setOrigin(0.5);
     btnJump.on('pointerdown', () => isJumpDown = true).on('pointerup', () => isJumpDown = false).on('pointerout', () => isJumpDown = false);
+
+    // 7. TOMBOL RESET POSISI (Pojok Kanan Atas)
+    const tombolReset = this.add.text(1150, 50, '🔄 RESET', {
+        fontSize: '24px',
+        fill: '#ffffff',
+        backgroundColor: '#ff3333', // Latar belakang merah
+        padding: { x: 15, y: 8 },
+        fontStyle: 'bold'
+    }).setOrigin(0.5).setInteractive();
+
+    // Logika saat tombol reset diklik
+    tombolReset.on('pointerdown', () => {
+        // Kembalikan Robot ke posisi awal (X: 580, Y: 600)
+        robot.setPosition(580, 600);
+        robot.setVelocity(0, 0); // Matikan kecepatan jatuhnya (momentum 0)
+
+        // Kembalikan Kotak Kayu ke posisi awal (X: 700, Y: 600)
+        kayu.setPosition(700, 600);
+        kayu.setVelocity(0, 0);  // Matikan kecepatan bergeraknya
+        kayu.setAngularVelocity(0); // Hentikan putaran kayunya jika sedang terguling
+    });
 }
 function update() {
     const gayaDorong = 0.005; // Kekuatan dorongan robot
