@@ -84,36 +84,42 @@ function create() {
     });  // <-- TAMBAHKAN INI! (Agar kayu murni meluncur, bukan terguling)
     
     // 6. MERAKIT KERANGKA GABUNGAN ROBOT
-  const M = Phaser.Physics.Matter.Matter;
+  // --- DI DALAM FUNCTION CREATE() ---
 
-// 1. BADAN ROBOT (Massa disesuaikan)
+const M = Phaser.Physics.Matter.Matter;
+
+// 1. BADAN ROBOT
 const badan = M.Bodies.rectangle(580, 600, 50, 35, { 
     mass: 5,
+    frictionAir: 0.02, // Redam gerak halus badan
     collisionFilter: { group: -1 }
 }); 
-
-// Turunkan Pusat Massa (Center of Mass) ke arah bawah sasis
 M.Body.setCentre(badan, { x: 0, y: 12 }, true);
 
-// 2. RODA (Lebih berat dari badan sebagai pemberat bawah & sumbu lebih lebar)
+// 2. RODA (Ditambahkan frictionAir & frictionStatic agar tidak jalan sendiri)
 const rodaKiri = M.Bodies.circle(560, 615, 8, { 
-    friction: 0.8, 
-    mass: 8,
-    collisionFilter: { group: -1 }
-});
-const rodaKanan = M.Bodies.circle(600, 615, 8, { 
-    friction: 0.8, 
+    friction: 1, 
+    frictionStatic: 5,  // Kunci roda saat diam
+    frictionAir: 0.05,   // Tahanan udara agar berhenti cepat
     mass: 8,
     collisionFilter: { group: -1 }
 });
 
-// 3. ENGSEL (Stiffness diturunkan sedikit ke 0.9 agar elastis)
+const rodaKanan = M.Bodies.circle(600, 615, 8, { 
+    friction: 1, 
+    frictionStatic: 5,
+    frictionAir: 0.05,
+    mass: 8,
+    collisionFilter: { group: -1 }
+});
+
+// 3. ENGSEL
 const engselKiri = M.Constraint.create({
     bodyA: badan,
     pointA: { x: -20, y: 15 },
     bodyB: rodaKiri,
     pointB: { x: 0, y: 0 },
-    stiffness: 0.9,
+    stiffness: 0.8,
     length: 0
 });
 
@@ -122,7 +128,7 @@ const engselKanan = M.Constraint.create({
     pointA: { x: 20, y: 15 },
     bodyB: rodaKanan,
     pointB: { x: 0, y: 0 },
-    stiffness: 0.9,
+    stiffness: 0.8,
     length: 0
 });
 
@@ -130,10 +136,38 @@ this.matter.world.add([badan, rodaKiri, rodaKanan, engselKiri, engselKanan]);
 
 // Simpan referensi ke variabel scene
 this.badanRobot = badan;
+this.rodaKiri = rodaKiri;
+this.rodaKanan = rodaKanan;
 
-// 4. SPRITE VISUAL TERPISAH (Bebas di-flip tanpa merusak sistem fisika)
+// 4. SPRITE VISUAL TERPISAH
 this.robotVisual = this.add.image(580, 600, 'robot-sprite').setScale(0.32);
 this.robotVisual.setOrigin(0.5, 0.55);
+
+
+// --- LOGIKA TOMBOL RESET (DIPERBAIKI TOTAL) ---
+tombolReset.on('pointerdown', () => {
+    // Reset Badan
+    M.Body.setPosition(this.badanRobot, { x: 580, y: 600 });
+    M.Body.setVelocity(this.badanRobot, { x: 0, y: 0 });
+    M.Body.setAngle(this.badanRobot, 0);
+    M.Body.setAngularVelocity(this.badanRobot, 0);
+
+    // Reset Roda Kiri (Wajib dipindah bersamaan agar engsel tidak putus/membentur)
+    M.Body.setPosition(this.rodaKiri, { x: 560, y: 615 });
+    M.Body.setVelocity(this.rodaKiri, { x: 0, y: 0 });
+    M.Body.setAngularVelocity(this.rodaKiri, 0);
+
+    // Reset Roda Kanan
+    M.Body.setPosition(this.rodaKanan, { x: 600, y: 615 });
+    M.Body.setVelocity(this.rodaKanan, { x: 0, y: 0 });
+    M.Body.setAngularVelocity(this.rodaKanan, 0);
+
+    // Reset Kotak Kayu
+    kayu.setPosition(700, 600); //[span_1](start_span)[span_1](end_span)
+    kayu.setVelocity(0, 0); //[span_2](start_span)[span_2](end_span)
+    kayu.setAngularVelocity(0); //[span_3](start_span)[span_3](end_span)
+});
+
 
 
     // 8. TEKS MISI (Header UI)
