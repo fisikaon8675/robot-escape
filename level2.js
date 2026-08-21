@@ -85,18 +85,16 @@ function create() {
         frictionStatic: 30
     });
     
-    // 6. MERAKIT KERANGKA GABUNGAN (COMPOUND BODY) ---
-   // --- 1. MERAKIT KERANGKA GABUNGAN SESUAI SKETSA ---
+    // 6. MERAKIT KERANGKA GABUNGAN ROBOT
+   // --- 1. Kerangka Robot
     const M = Phaser.Physics.Matter.Matter;
 
-    // Kotak atas: lebar 48, tinggi 35. 
-    // Y di-set ke -5 agar pusat gravitasinya (titik hijau) agak turun ke bawah perut.
-    const badan = M.Bodies.rectangle(0, -5, 48, 35); 
-
-    // Roda kiri & kanan: jari-jari 8 (agar tidak terlalu besar).
-    // Y di-set ke 15 agar posisinya pas di bawah kotak.
-    const rodaKiri = M.Bodies.circle(-15, 15, 8);
-    const rodaKanan = M.Bodies.circle(15, 15, 8);
+    // Badan: Lebar 150, Tinggi 100, digeser ke atas sedikit (-15)
+    const badan = M.Bodies.rectangle(0, -15, 150, 100); 
+    
+    // Roda: Radius 24, digeser ke bawah (45) dan ke kiri/kanan (-45 & 45)
+    const rodaKiri = M.Bodies.circle(-45, 45, 24);
+    const rodaKanan = M.Bodies.circle(45, 45, 24);
 
     const robotCompoundBody = M.Body.create({
         parts: [badan, rodaKiri, rodaKanan],
@@ -104,24 +102,13 @@ function create() {
         friction: 0.05
     });
 
-    // --- 2. MEMASANG GAMBAR KE KERANGKA ---
+    // --- 2. PASANG & KECILKAN BERSAMAAN ---
     robot = this.matter.add.sprite(580, 600, 'robot-sprite');
-    
-    // Pasang kerangka fisika ke sprite
     robot.setExistingBody(robotCompoundBody);
-
-    // --- 3. TRIK MENYELARASKAN VISUAL (PENTING!) ---
-    // JANGAN PAKAI setDisplaySize() KARENA AKAN MERUSAK FISIKA BENTUK RODA!
     
-    // Pasang kerangka fisika ke sprite
-    robot.setExistingBody(robotCompoundBody);
-
-    // KECILKAN GAMBAR (32% dari 158x146 = sekitar 50x46 piksel)
-    robot.setScale(0.32); 
-
-    // Sesuaikan sedikit posisi Y (agar perutnya pas di atas roda)
-    // Coba angka 0.55 atau 0.6 jika gambarnya masih terasa kurang turun/naik
-    robot.setOrigin(0.5, 0.55);
+    // Karena sekarang Gambar dan Fisikanya sama-sama raksasa (Skala 1:1),
+    // kita bisa mengecilkannya bersamaan ke ukuran yang Abang mau dengan aman!
+    robot.setScale(0.32);
 
     // 8. TEKS MISI (Header UI)
     const panelHeader = this.add.rectangle(640, 50, 800, 80, 0x000000, 0.7);
