@@ -61,7 +61,7 @@ function create() {
         isStatic: true, 
         angle: -0.5,   
         friction: 0.0008, // Sangat licin (hampir nol)
-        frictionStatic: 0.001
+        frictionStatic: 0.1
     });
     // UI Label Es
     this.add.text(980, 620, "❄️ JALUR ES\nSangat Licin!", { 
