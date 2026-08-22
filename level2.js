@@ -212,7 +212,7 @@ function create() {
         kayu.setVelocity(0, 0);  // Matikan kecepatan bergeraknya
         kayu.setAngularVelocity(0); // Hentikan putaran kayunya jika sedang terguling
     });
-}
+
 function update() {
     // --- DI DALAM FUNCTION UPDATE() ---
 
