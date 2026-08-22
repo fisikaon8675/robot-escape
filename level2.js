@@ -166,7 +166,7 @@ function create() {
 } // <--- INI DIA! Kurung kurawal penutup fungsi create() yang tadi hilang!
 
 function update() {
-    const kecRoda =0.5;
+    const kecRoda =0.05;
    // const gayaDorong = 0.008;
     const M = Phaser.Physics.Matter.Matter;
 
