@@ -166,7 +166,7 @@ function create() {
 } // <--- INI DIA! Kurung kurawal penutup fungsi create() yang tadi hilang!
 
 function update() {
-    const gayaDorong = 0.008;
+    const gayaDorong = 0.003;
     const M = Phaser.Physics.Matter.Matter;
 
     // Sinkronkan visual
