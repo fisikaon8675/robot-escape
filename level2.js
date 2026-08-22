@@ -80,17 +80,17 @@ function create() {
     const M = Phaser.Physics.Matter.Matter;
 
     const badan = M.Bodies.rectangle(580, 600, 50, 35, { 
-        mass: 4, 
+        mass: 10, 
         frictionAir: 0.02, 
         collisionFilter: { group: -1 }
     }); 
 
     const rodaKiri = M.Bodies.circle(560, 615, 8, { 
-        friction: 1, mass: 5, collisionFilter: { group: -1 }
+        friction: 1, mass: 10, collisionFilter: { group: -1 }
     });
 
     const rodaKanan = M.Bodies.circle(600, 615, 8, { 
-        friction: 1, mass: 5, collisionFilter: { group: -1 }
+        friction: 1, mass: 10, collisionFilter: { group: -1 }
     });
 
     const engselKiri = M.Constraint.create({
@@ -166,7 +166,7 @@ function create() {
 } // <--- INI DIA! Kurung kurawal penutup fungsi create() yang tadi hilang!
 
 function update() {
-    const gayaDorong = 0.003;
+    const gayaDorong = 0.01;
     const M = Phaser.Physics.Matter.Matter;
 
     // Sinkronkan visual
