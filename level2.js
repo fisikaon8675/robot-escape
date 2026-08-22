@@ -166,25 +166,34 @@ function create() {
 } // <--- INI DIA! Kurung kurawal penutup fungsi create() yang tadi hilang!
 
 function update() {
-    const gayaDorong = 0.001;
+    const gayaDorong = 0.008;
+    const M = Phaser.Physics.Matter.Matter;
 
     // Sinkronkan visual
     this.robotVisual.setPosition(this.badanRobot.position.x, this.badanRobot.position.y);
     this.robotVisual.setRotation(this.badanRobot.angle);
 
-    // Kontrol Kiri / Kanan
+    // KONTROL PERGERAKAN & REM
     if (cursors.left.isDown || isLeftDown) {
-        Phaser.Physics.Matter.Matter.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: -gayaDorong, y: 0 });
+        // Gas ke kiri
+        M.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: -gayaDorong, y: 0 });
         this.robotVisual.setFlipX(true);
     }
     else if (cursors.right.isDown || isRightDown) {
-        Phaser.Physics.Matter.Matter.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: gayaDorong, y: 0 });
+        // Gas ke kanan
+        M.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: gayaDorong, y: 0 });
         this.robotVisual.setFlipX(false);
     }
+    else {
+        // === SISTEM REM OTOMATIS AKTIF ===
+        // Jika tidak ada tombol gas yang ditekan, paksa roda berhenti berputar!
+        M.Body.setAngularVelocity(this.rodaKiri, 0);
+        M.Body.setAngularVelocity(this.rodaKanan, 0);
+    }
 
-    // Lompat
+    // Lompat (Tidak berubah)
     if ((cursors.up.isDown || isJumpDown) && Math.abs(this.badanRobot.velocity.y) < 0.5) {
-        Phaser.Physics.Matter.Matter.Body.setVelocity(this.badanRobot, { x: this.badanRobot.velocity.x, y: -10 });
+        M.Body.setVelocity(this.badanRobot, { x: this.badanRobot.velocity.x, y: -10 });
         isJumpDown = false;
     }
 }
