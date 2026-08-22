@@ -167,7 +167,7 @@ function create() {
 
 function update() {
     const kecRoda =0.5;
-    const gayaDorong = 0.008;
+   // const gayaDorong = 0.008;
     const M = Phaser.Physics.Matter.Matter;
 
     // Sinkronkan visual
