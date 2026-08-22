@@ -166,7 +166,7 @@ function create() {
 } // <--- INI DIA! Kurung kurawal penutup fungsi create() yang tadi hilang!
 
 function update() {
-    const gayaDorong = 0.008;
+    const gayaDorong = 0.001;
 
     // Sinkronkan visual
     this.robotVisual.setPosition(this.badanRobot.position.x, this.badanRobot.position.y);
