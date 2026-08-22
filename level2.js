@@ -86,7 +86,7 @@ function create() {
     }); 
 
     const rodaKiri = M.Bodies.circle(560, 615, 8, { 
-        friction: 1, mass: 10, collisionFilter: { group: -1 }
+        friction: 1, mass: 5, collisionFilter: { group: -1 }
     });
 
     const rodaKanan = M.Bodies.circle(600, 615, 8, { 
@@ -166,22 +166,27 @@ function create() {
 } // <--- INI DIA! Kurung kurawal penutup fungsi create() yang tadi hilang!
 
 function update() {
+    const kecRoda =0.5;
     const gayaDorong = 0.008;
     const M = Phaser.Physics.Matter.Matter;
 
     // Sinkronkan visual
     this.robotVisual.setPosition(this.badanRobot.position.x, this.badanRobot.position.y);
     this.robotVisual.setRotation(this.badanRobot.angle);
+    
 
     // KONTROL PERGERAKAN & REM
     if (cursors.left.isDown || isLeftDown) {
         // Gas ke kiri
-        M.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: -gayaDorong, y: 0 });
+        M.Body.setAngularVelocity(this.rodaKiri, -kecRoda);
+        M.Body.setAngularVelocity(this.rodaKanan, -kecRoda);
         this.robotVisual.setFlipX(true);
+
     }
     else if (cursors.right.isDown || isRightDown) {
         // Gas ke kanan
-        M.Body.applyForce(this.badanRobot, this.badanRobot.position, { x: gayaDorong, y: 0 });
+        M.Body.setAngularVelocity(this.rodaKiri, kecRoda);
+        M.Body.setAngularVelocity(this.rodaKanan, kecRoda);
         this.robotVisual.setFlipX(false);
     }
     else {
