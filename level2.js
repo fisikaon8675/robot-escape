@@ -74,13 +74,13 @@ function create() {
         mass: 0.5,
         friction: 1,        
         frictionStatic: 10
-    }).setFixedRotation(); 
+    }); 
     
     // 6. MERAKIT ROBOT MOBIL
     const M = Phaser.Physics.Matter.Matter;
 
     const badan = M.Bodies.rectangle(580, 600, 50, 35, { 
-        mass: 1, 
+        mass: 4, 
         frictionAir: 0.02, 
         collisionFilter: { group: -1 }
     }); 
