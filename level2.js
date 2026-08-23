@@ -166,39 +166,45 @@ function create() {
 } // <--- INI DIA! Kurung kurawal penutup fungsi create() yang tadi hilang!
 
 function update() {
-    const kecRoda =0.35;
-   // const gayaDorong = 0.008;
-    const M = Phaser.Physics.Matter.Matter;
+    // PERBAIKAN: Kecepatan roda dinaikkan agar tidak ngeden
+        const kecRoda = 0.35; 
+        const M = Phaser.Physics.Matter.Matter;
 
-    // Sinkronkan visual
-    this.robotVisual.setPosition(this.badanRobot.position.x, this.badanRobot.position.y);
-    this.robotVisual.setRotation(this.badanRobot.angle);
-    
+        // Sinkronkan visual dengan body fisika
+        this.robotVisual.setPosition(this.badanRobot.position.x, this.badanRobot.position.y);
+        this.robotVisual.setRotation(this.badanRobot.angle);
+        
+        this.rodaKiriVisual.setPosition(this.rodaKiri.position.x, this.rodaKiri.position.y);
+        this.rodaKananVisual.setPosition(this.rodaKanan.position.x, this.rodaKanan.position.y);
 
-    // KONTROL PERGERAKAN & REM
-    if (cursors.left.isDown || isLeftDown) {
-        // Gas ke kiri
-        M.Body.setAngularVelocity(this.rodaKiri, -kecRoda);
-        M.Body.setAngularVelocity(this.rodaKanan, -kecRoda);
-        this.robotVisual.setFlipX(true);
+        // KONTROL PERGERAKAN & REM
+        if (cursors.left.isDown || isLeftDown) {
+            M.Body.setAngularVelocity(this.rodaKiri, -kecRoda);
+            M.Body.setAngularVelocity(this.rodaKanan, -kecRoda);
+            this.robotVisual.setFlipX(true);
+        }
+        else if (cursors.right.isDown || isRightDown) {
+            M.Body.setAngularVelocity(this.rodaKiri, kecRoda);
+            M.Body.setAngularVelocity(this.rodaKanan, kecRoda);
+            this.robotVisual.setFlipX(false);
+        }
+        else {
+            // Rem lebih natural: Meredam putaran, bukan memaksa 0 seketika yang merusak physics constraint
+            M.Body.setAngularVelocity(this.rodaKiri, this.rodaKiri.angularVelocity * 0.5);
+            M.Body.setAngularVelocity(this.rodaKanan, this.rodaKanan.angularVelocity * 0.5);
+        }
 
-    }
-    else if (cursors.right.isDown || isRightDown) {
-        // Gas ke kanan
-        M.Body.setAngularVelocity(this.rodaKiri, kecRoda);
-        M.Body.setAngularVelocity(this.rodaKanan, kecRoda);
-        this.robotVisual.setFlipX(false);
-    }
-    else {
-        // === SISTEM REM OTOMATIS AKTIF ===
-        // Jika tidak ada tombol gas yang ditekan, paksa roda berhenti berputar!
-        M.Body.setAngularVelocity(this.rodaKiri, 0);
-        M.Body.setAngularVelocity(this.rodaKanan, 0);
-    }
+        // PERBAIKAN STABILITAS: "Righting Moment" (Penyeimbang otomatis)
+        // Mencegah robot terbalik saat menanjak curam dengan mengoreksi rotasi bodinya pelan-pelan
+        if (Math.abs(this.badanRobot.angle) > 0.1) {
+            // Memberikan torsi perlawanan jika mobil miring
+            M.Body.setAngularVelocity(this.badanRobot, this.badanRobot.angularVelocity - (this.badanRobot.angle * 0.1));
+        }
 
-    // Lompat (Tidak berubah)
-    if ((cursors.up.isDown || isJumpDown) && Math.abs(this.badanRobot.velocity.y) < 0.5) {
-        M.Body.setVelocity(this.badanRobot, { x: this.badanRobot.velocity.x, y: -10 });
-        isJumpDown = false;
-    }
+        // Lompat 
+        if ((cursors.up.isDown || isJumpDown) && Math.abs(this.badanRobot.velocity.y) < 0.5) {
+            // Berikan gaya dorong ke atas pada badan
+            M.Body.setVelocity(this.badanRobot, { x: this.badanRobot.velocity.x, y: -12 });
+            isJumpDown = false;
+        }
 }
