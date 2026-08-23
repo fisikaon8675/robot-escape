@@ -166,45 +166,46 @@ function create() {
 } // <--- INI DIA! Kurung kurawal penutup fungsi create() yang tadi hilang!
 
 function update() {
-    // PERBAIKAN: Kecepatan roda dinaikkan agar tidak ngeden
-        const kecRoda = 0.35; 
-        const M = Phaser.Physics.Matter.Matter;
+  // PERBAIKAN: Kecepatan roda dinaikkan agar tidak ngeden
+const kecRoda = 0.35; 
+const M = Phaser.Physics.Matter.Matter;
 
-        // Sinkronkan visual dengan body fisika
-        this.robotVisual.setPosition(this.badanRobot.position.x, this.badanRobot.position.y);
-        this.robotVisual.setRotation(this.badanRobot.angle);
-        
-        this.rodaKiriVisual.setPosition(this.rodaKiri.position.x, this.rodaKiri.position.y);
-        this.rodaKananVisual.setPosition(this.rodaKanan.position.x, this.rodaKanan.position.y);
+// Sinkronkan visual dengan body fisika
+this.robotVisual.setPosition(this.badanRobot.position.x, this.badanRobot.position.y);
+this.robotVisual.setRotation(this.badanRobot.angle);
 
-        // KONTROL PERGERAKAN & REM
-        if (cursors.left.isDown || isLeftDown) {
-            M.Body.setAngularVelocity(this.rodaKiri, -kecRoda);
-            M.Body.setAngularVelocity(this.rodaKanan, -kecRoda);
-            this.robotVisual.setFlipX(true);
-        }
-        else if (cursors.right.isDown || isRightDown) {
-            M.Body.setAngularVelocity(this.rodaKiri, kecRoda);
-            M.Body.setAngularVelocity(this.rodaKanan, kecRoda);
-            this.robotVisual.setFlipX(false);
-        }
-        else {
-            // Rem lebih natural: Meredam putaran, bukan memaksa 0 seketika yang merusak physics constraint
-            M.Body.setAngularVelocity(this.rodaKiri, this.rodaKiri.angularVelocity * 0.5);
-            M.Body.setAngularVelocity(this.rodaKanan, this.rodaKanan.angularVelocity * 0.5);
-        }
+this.rodaKiriVisual.setPosition(this.rodaKiri.position.x, this.rodaKiri.position.y);
+this.rodaKananVisual.setPosition(this.rodaKanan.position.x, this.rodaKanan.position.y);
 
-        // PERBAIKAN STABILITAS: "Righting Moment" (Penyeimbang otomatis)
-        // Mencegah robot terbalik saat menanjak curam dengan mengoreksi rotasi bodinya pelan-pelan
-        if (Math.abs(this.badanRobot.angle) > 0.1) {
-            // Memberikan torsi perlawanan jika mobil miring
-            M.Body.setAngularVelocity(this.badanRobot, this.badanRobot.angularVelocity - (this.badanRobot.angle * 0.1));
-        }
+// 1. KONTROL PERGERAKAN HORIZONTAL & REM
+if (cursors.left.isDown || isLeftDown) {
+    M.Body.setAngularVelocity(this.rodaKiri, -kecRoda);
+    M.Body.setAngularVelocity(this.rodaKanan, -kecRoda);
+    this.robotVisual.setFlipX(true);
+}
+else if (cursors.right.isDown || isRightDown) {
+    M.Body.setAngularVelocity(this.rodaKiri, kecRoda);
+    M.Body.setAngularVelocity(this.rodaKanan, kecRoda);
+    this.robotVisual.setFlipX(false);
+}
+else {
+    // Rem lebih natural: Meredam putaran, bukan memaksa 0 seketika yang merusak physics constraint
+    M.Body.setAngularVelocity(this.rodaKiri, this.rodaKiri.angularVelocity * 0.5);
+    M.Body.setAngularVelocity(this.rodaKanan, this.rodaKanan.angularVelocity * 0.5);
+}
 
-        // Lompat 
-        if ((cursors.up.isDown || isJumpDown) && Math.abs(this.badanRobot.velocity.y) < 0.5) {
-            // Berikan gaya dorong ke atas pada badan
-            M.Body.setVelocity(this.badanRobot, { x: this.badanRobot.velocity.x, y: -12 });
-            isJumpDown = false;
-        }
+// 2. PERBAIKAN STABILITAS: "Righting Moment" (Penyeimbang otomatis)
+// Berdiri sendiri dengan 'if', agar robot terus menyeimbangkan diri meski sedang digas/direm
+if (Math.abs(this.badanRobot.angle) > 0.1) {
+    // Memberikan torsi perlawanan jika mobil miring
+    M.Body.setAngularVelocity(this.badanRobot, this.badanRobot.angularVelocity - (this.badanRobot.angle * 0.1));
+}
+
+// 3. KONTROL LOMPAT 
+// Berdiri sendiri dengan 'if', agar bisa melompat saat diam maupun berjalan
+if ((cursors.up.isDown || isJumpDown) && Math.abs(this.badanRobot.velocity.y) < 0.5) {
+    // Berikan gaya dorong ke atas pada badan
+    M.Body.setVelocity(this.badanRobot, { x: this.badanRobot.velocity.x, y: -12 });
+    isJumpDown = false;
+}
 }
