@@ -8,9 +8,12 @@ let isJumpDown = false;
 
 let jumpCooldown = 0;
 
+// Menyimpan body yang sedang menyentuh permukaan
+const groundContacts = new Set();
+
 
 // =====================================================
-// KONFIGURASI GAME
+// CONFIG
 // =====================================================
 
 const config = {
@@ -20,7 +23,6 @@ const config = {
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-
         width: 1280,
         height: 720
     },
@@ -37,8 +39,9 @@ const config = {
                 y: 1
             },
 
-            // false agar tampilan game bersih
-            debug: false
+            debug: false,
+
+            enableSleeping: false
         }
     },
 
@@ -88,7 +91,7 @@ function create() {
 
 
     // =================================================
-    // 1. LANTAI DASAR
+    // LANTAI
     // =================================================
 
     const lantai = this.add.rectangle(
@@ -106,13 +109,15 @@ function create() {
 
             friction: 0.8,
 
-            frictionStatic: 1
+            frictionStatic: 1,
+
+            restitution: 0
         }
     );
 
 
     // =================================================
-    // 2. TANJAKAN KARET
+    // TANJAKAN KARET
     // =================================================
 
     const tanjakanKaret = this.add.rectangle(
@@ -131,10 +136,11 @@ function create() {
 
             angle: 0.5,
 
-            // Karet kasar
             friction: 1,
 
-            frictionStatic: 1
+            frictionStatic: 1,
+
+            restitution: 0
         }
     );
 
@@ -159,7 +165,7 @@ function create() {
 
 
     // =================================================
-    // 3. TANJAKAN ES
+    // TANJAKAN ES
     // =================================================
 
     const tanjakanEs = this.add.rectangle(
@@ -178,10 +184,11 @@ function create() {
 
             angle: -0.5,
 
-            // Es sangat licin
             friction: 0.001,
 
-            frictionStatic: 0.02
+            frictionStatic: 0.02,
+
+            restitution: 0
         }
     );
 
@@ -206,7 +213,7 @@ function create() {
 
 
     // =================================================
-    // 4. ZONA FINISH
+    // ZONA MERAH
     // =================================================
 
     this.zonaKiri = this.add.rectangle(
@@ -219,6 +226,10 @@ function create() {
     );
 
 
+    // =================================================
+    // ZONA HIJAU
+    // =================================================
+
     this.zonaKanan = this.add.rectangle(
         1180,
         350,
@@ -230,7 +241,7 @@ function create() {
 
 
     // =================================================
-    // 5. KAYU / KOTAK
+    // KOTAK KAYU
     // =================================================
 
     const kayuVisual = this.add.image(
@@ -246,9 +257,7 @@ function create() {
 
 
     kayu = this.matter.add.gameObject(
-
         kayuVisual,
-
         {
 
             shape: {
@@ -273,9 +282,7 @@ function create() {
     );
 
 
-    // Kotak tidak boleh berputar
-    // supaya mudah didorong robot.
-
+    // Kayu tidak berputar
     M.Body.setInertia(
         kayu.body,
         Infinity
@@ -283,7 +290,7 @@ function create() {
 
 
     // =================================================
-    // 6. MEMBUAT ROBOT
+    // ROBOT
     // =================================================
 
     const robotGroup = -1;
@@ -296,16 +303,18 @@ function create() {
     const badan = M.Bodies.rectangle(
 
         580,
-        580,
+
+        600,
 
         56,
+
         34,
 
         {
 
             mass: 5,
 
-            friction: 0.2,
+            friction: 0.25,
 
             frictionAir: 0.08,
 
@@ -326,7 +335,8 @@ function create() {
     const rodaKiri = M.Bodies.circle(
 
         560,
-        615,
+
+        620,
 
         10,
 
@@ -338,7 +348,7 @@ function create() {
 
             frictionStatic: 1,
 
-            frictionAir: 0.03,
+            frictionAir: 0.04,
 
             restitution: 0,
 
@@ -357,7 +367,8 @@ function create() {
     const rodaKanan = M.Bodies.circle(
 
         600,
-        615,
+
+        620,
 
         10,
 
@@ -369,7 +380,7 @@ function create() {
 
             frictionStatic: 1,
 
-            frictionAir: 0.03,
+            frictionAir: 0.04,
 
             restitution: 0,
 
@@ -382,7 +393,7 @@ function create() {
 
 
     // =================================================
-    // 7. CONSTRAINT RODA KIRI
+    // CONSTRAINT RODA KIRI
     // =================================================
 
     const engselKiri = M.Constraint.create({
@@ -390,27 +401,31 @@ function create() {
         bodyA: badan,
 
         pointA: {
+
             x: -20,
-            y: 16
+
+            y: 20
         },
 
         bodyB: rodaKiri,
 
         pointB: {
+
             x: 0,
+
             y: 0
         },
 
-        stiffness: 1,
+        stiffness: 0.9,
 
-        damping: 0.35,
+        damping: 0.2,
 
         length: 0
     });
 
 
     // =================================================
-    // 8. CONSTRAINT RODA KANAN
+    // CONSTRAINT RODA KANAN
     // =================================================
 
     const engselKanan = M.Constraint.create({
@@ -418,27 +433,31 @@ function create() {
         bodyA: badan,
 
         pointA: {
+
             x: 20,
-            y: 16
+
+            y: 20
         },
 
         bodyB: rodaKanan,
 
         pointB: {
+
             x: 0,
+
             y: 0
         },
 
-        stiffness: 1,
+        stiffness: 0.9,
 
-        damping: 0.35,
+        damping: 0.2,
 
         length: 0
     });
 
 
     // =================================================
-    // 9. MASUKKAN ROBOT KE MATTER WORLD
+    // MASUKKAN ROBOT KE WORLD
     // =================================================
 
     this.matter.world.add([
@@ -457,7 +476,18 @@ function create() {
 
 
     // =================================================
-    // 10. KUNCI ROTASI BADAN ROBOT
+    // SIMPAN BODY
+    // =================================================
+
+    this.badanRobot = badan;
+
+    this.rodaKiri = rodaKiri;
+
+    this.rodaKanan = rodaKanan;
+
+
+    // =================================================
+    // KUNCI ROTASI CHASSIS
     // =================================================
 
     M.Body.setInertia(
@@ -476,24 +506,15 @@ function create() {
     );
 
 
-    // Simpan body robot
-
-    this.badanRobot = badan;
-
-    this.rodaKiri = rodaKiri;
-
-    this.rodaKanan = rodaKanan;
-
-
     // =================================================
-    // 11. VISUAL ROBOT
+    // VISUAL ROBOT
     // =================================================
 
     this.robotVisual = this.add.image(
 
         580,
 
-        580,
+        600,
 
         'robot-sprite'
     );
@@ -510,17 +531,14 @@ function create() {
 
 
     // =================================================
-    // 12. VISUAL RODA
+    // VISUAL RODA
     // =================================================
-
-    // INI PERBAIKAN PENTING.
-    // Pada kode lama objek ini belum dibuat.
 
     this.rodaKiriVisual = this.add.circle(
 
         560,
 
-        615,
+        620,
 
         10,
 
@@ -532,7 +550,7 @@ function create() {
 
         600,
 
-        615,
+        620,
 
         10,
 
@@ -541,7 +559,7 @@ function create() {
 
 
     // =================================================
-    // 13. JUDUL MISI
+    // MISI
     // =================================================
 
     this.add.rectangle(
@@ -582,7 +600,7 @@ function create() {
 
 
     // =================================================
-    // 14. STATUS GAME
+    // STATUS
     // =================================================
 
     this.statusText = this.add.text(
@@ -608,7 +626,7 @@ function create() {
 
 
     // =================================================
-    // 15. KEYBOARD
+    // KEYBOARD
     // =================================================
 
     cursors =
@@ -616,7 +634,7 @@ function create() {
 
 
     // =================================================
-    // 16. TOMBOL KIRI
+    // TOUCH - KIRI
     // =================================================
 
     const btnLeft = this.add.rectangle(
@@ -662,34 +680,42 @@ function create() {
         .on(
             'pointerdown',
             () => {
+
                 isLeftDown = true;
+
             }
         )
 
         .on(
             'pointerup',
             () => {
+
                 isLeftDown = false;
+
             }
         )
 
         .on(
             'pointerout',
             () => {
+
                 isLeftDown = false;
+
             }
         )
 
         .on(
             'pointerupoutside',
             () => {
+
                 isLeftDown = false;
+
             }
         );
 
 
     // =================================================
-    // 17. TOMBOL KANAN
+    // TOUCH - KANAN
     // =================================================
 
     const btnRight = this.add.rectangle(
@@ -735,34 +761,42 @@ function create() {
         .on(
             'pointerdown',
             () => {
+
                 isRightDown = true;
+
             }
         )
 
         .on(
             'pointerup',
             () => {
+
                 isRightDown = false;
+
             }
         )
 
         .on(
             'pointerout',
             () => {
+
                 isRightDown = false;
+
             }
         )
 
         .on(
             'pointerupoutside',
             () => {
+
                 isRightDown = false;
+
             }
         );
 
 
     // =================================================
-    // 18. TOMBOL LOMPAT
+    // TOUCH - LOMPAT
     // =================================================
 
     const btnJump = this.add.rectangle(
@@ -808,34 +842,42 @@ function create() {
         .on(
             'pointerdown',
             () => {
+
                 isJumpDown = true;
+
             }
         )
 
         .on(
             'pointerup',
             () => {
+
                 isJumpDown = false;
+
             }
         )
 
         .on(
             'pointerout',
             () => {
+
                 isJumpDown = false;
+
             }
         )
 
         .on(
             'pointerupoutside',
             () => {
+
                 isJumpDown = false;
+
             }
         );
 
 
     // =================================================
-    // 19. TOMBOL RESET
+    // RESET
     // =================================================
 
     const tombolReset = this.add.text(
@@ -884,7 +926,7 @@ function create() {
 
 
     // =================================================
-    // 20. POSISI AWAL
+    // POSISI AWAL
     // =================================================
 
     this.robotStart = {
@@ -893,21 +935,21 @@ function create() {
 
             x: 580,
 
-            y: 580
+            y: 600
         },
 
         left: {
 
             x: 560,
 
-            y: 615
+            y: 620
         },
 
         right: {
 
             x: 600,
 
-            y: 615
+            y: 620
         }
     };
 
@@ -921,7 +963,96 @@ function create() {
 
 
     // =================================================
-    // 21. RESET AWAL
+    // DETEKSI KONTAK DENGAN PERMUKAAN
+    // =================================================
+
+    this.matter.world.on(
+
+        'collisionstart',
+
+        function(event) {
+
+            event.pairs.forEach(
+
+                function(pair) {
+
+                    const bodyA = pair.bodyA;
+
+                    const bodyB = pair.bodyB;
+
+
+                    const robotBodies = [
+
+                        badan.id,
+
+                        rodaKiri.id,
+
+                        rodaKanan.id
+
+                    ];
+
+
+                    if (
+
+                        robotBodies.includes(bodyA.id) &&
+
+                        bodyB.isStatic
+
+                    ) {
+
+                        groundContacts.add(bodyA.id);
+
+                    }
+
+
+                    if (
+
+                        robotBodies.includes(bodyB.id) &&
+
+                        bodyA.isStatic
+
+                    ) {
+
+                        groundContacts.add(bodyB.id);
+
+                    }
+
+                }
+
+            );
+
+        }
+    );
+
+
+    this.matter.world.on(
+
+        'collisionend',
+
+        function(event) {
+
+            event.pairs.forEach(
+
+                function(pair) {
+
+                    groundContacts.delete(
+                        pair.bodyA.id
+                    );
+
+                    groundContacts.delete(
+                        pair.bodyB.id
+                    );
+
+                }
+
+            );
+
+        }
+    );
+
+
+    // =================================================
+    // RESET AWAL
     // =================================================
 
     resetGame(this);
@@ -1100,17 +1231,19 @@ function resetGame(scene) {
 
 
     // =================================================
-    // RESET STATUS
+    // RESET VARIABLE
     // =================================================
 
     jumpCooldown = 0;
-
 
     isLeftDown = false;
 
     isRightDown = false;
 
     isJumpDown = false;
+
+
+    groundContacts.clear();
 
 
     if (scene.statusText) {
@@ -1127,8 +1260,6 @@ function resetGame(scene) {
 
 function update(time, delta) {
 
-    // Jangan update sebelum robot siap.
-
     if (!this.badanRobot) {
 
         return;
@@ -1141,7 +1272,7 @@ function update(time, delta) {
 
 
     // =================================================
-    // 1. SINKRONISASI VISUAL ROBOT
+    // VISUAL ROBOT
     // =================================================
 
     this.robotVisual.setPosition(
@@ -1153,13 +1284,13 @@ function update(time, delta) {
     );
 
 
-    // Robot tidak ikut miring.
+    // Chassis selalu tegak.
 
     this.robotVisual.setRotation(0);
 
 
     // =================================================
-    // 2. SINKRONISASI RODA KIRI
+    // VISUAL RODA KIRI
     // =================================================
 
     this.rodaKiriVisual.setPosition(
@@ -1172,7 +1303,7 @@ function update(time, delta) {
 
 
     // =================================================
-    // 3. SINKRONISASI RODA KANAN
+    // VISUAL RODA KANAN
     // =================================================
 
     this.rodaKananVisual.setPosition(
@@ -1185,7 +1316,7 @@ function update(time, delta) {
 
 
     // =================================================
-    // 4. KONTROL GERAK
+    // INPUT
     // =================================================
 
     const left =
@@ -1202,22 +1333,42 @@ function update(time, delta) {
         isRightDown;
 
 
-    // Kecepatan putar roda.
-
-    const targetWheelSpeed = 0.32;
-
-
     // =================================================
-    // GERAK KIRI
+    // GERAK ROBOT
     // =================================================
+
+    const moveForce = 0.0025;
+
+
+    // -------------------------------------------------
+    // KIRI
+    // -------------------------------------------------
 
     if (left) {
+
+        M.Body.applyForce(
+
+            this.badanRobot,
+
+            this.badanRobot.position,
+
+            {
+
+                x: -moveForce,
+
+                y: 0
+            }
+
+        );
+
+
+        // Roda berputar secara visual/physics.
 
         M.Body.setAngularVelocity(
 
             this.rodaKiri,
 
-            -targetWheelSpeed
+            -0.35
 
         );
 
@@ -1226,7 +1377,7 @@ function update(time, delta) {
 
             this.rodaKanan,
 
-            -targetWheelSpeed
+            -0.35
 
         );
 
@@ -1236,17 +1387,33 @@ function update(time, delta) {
     }
 
 
-    // =================================================
-    // GERAK KANAN
-    // =================================================
+    // -------------------------------------------------
+    // KANAN
+    // -------------------------------------------------
 
     else if (right) {
+
+        M.Body.applyForce(
+
+            this.badanRobot,
+
+            this.badanRobot.position,
+
+            {
+
+                x: moveForce,
+
+                y: 0
+            }
+
+        );
+
 
         M.Body.setAngularVelocity(
 
             this.rodaKiri,
 
-            targetWheelSpeed
+            0.35
 
         );
 
@@ -1255,7 +1422,7 @@ function update(time, delta) {
 
             this.rodaKanan,
 
-            targetWheelSpeed
+            0.35
 
         );
 
@@ -1271,14 +1438,11 @@ function update(time, delta) {
 
     else {
 
-        // Jangan langsung mengubah ke 0.
-        // Perlambatan bertahap membuat physics lebih stabil.
-
         M.Body.setAngularVelocity(
 
             this.rodaKiri,
 
-            this.rodaKiri.angularVelocity * 0.88
+            this.rodaKiri.angularVelocity * 0.9
 
         );
 
@@ -1287,7 +1451,7 @@ function update(time, delta) {
 
             this.rodaKanan,
 
-            this.rodaKanan.angularVelocity * 0.88
+            this.rodaKanan.angularVelocity * 0.9
 
         );
 
@@ -1295,10 +1459,67 @@ function update(time, delta) {
 
 
     // =================================================
-    // 5. STABILISASI CHASSIS
+    // BATAS KECEPATAN ROBOT
     // =================================================
 
-    // Chassis robot selalu tegak.
+    const maxSpeed = 6;
+
+
+    if (
+
+        this.badanRobot.velocity.x >
+
+        maxSpeed
+
+    ) {
+
+        M.Body.setVelocity(
+
+            this.badanRobot,
+
+            {
+
+                x: maxSpeed,
+
+                y:
+                    this.badanRobot.velocity.y
+
+            }
+
+        );
+
+    }
+
+
+    if (
+
+        this.badanRobot.velocity.x <
+
+        -maxSpeed
+
+    ) {
+
+        M.Body.setVelocity(
+
+            this.badanRobot,
+
+            {
+
+                x: -maxSpeed,
+
+                y:
+                    this.badanRobot.velocity.y
+
+            }
+
+        );
+
+    }
+
+
+    // =================================================
+    // STABILISASI CHASSIS
+    // =================================================
 
     M.Body.setAngle(
 
@@ -1319,7 +1540,7 @@ function update(time, delta) {
 
 
     // =================================================
-    // 6. SISTEM LOMPAT
+    // COOLDOWN LOMPAT
     // =================================================
 
     if (jumpCooldown > 0) {
@@ -1329,6 +1550,10 @@ function update(time, delta) {
     }
 
 
+    // =================================================
+    // LOMPAT
+    // =================================================
+
     const inginLompat =
 
         cursors.up.isDown ||
@@ -1336,27 +1561,32 @@ function update(time, delta) {
         isJumpDown;
 
 
-    // Robot dianggap menyentuh lantai
-    // ketika kecepatan vertikal sangat kecil.
+    const sedangMenyentuhTanah =
 
-    const sedangDiLantai =
+        groundContacts.has(
+            this.badanRobot.id
+        ) ||
 
-        Math.abs(
-            this.badanRobot.velocity.y
-        ) < 0.25;
+        groundContacts.has(
+            this.rodaKiri.id
+        ) ||
+
+        groundContacts.has(
+            this.rodaKanan.id
+        );
 
 
     if (
 
         inginLompat &&
 
-        sedangDiLantai &&
+        sedangMenyentuhTanah &&
 
         jumpCooldown <= 0
 
     ) {
 
-        // Badan robot
+        // Badan
 
         M.Body.setVelocity(
 
@@ -1367,7 +1597,7 @@ function update(time, delta) {
                 x:
                     this.badanRobot.velocity.x,
 
-                y: -9
+                y: -10
 
             }
 
@@ -1385,7 +1615,7 @@ function update(time, delta) {
                 x:
                     this.rodaKiri.velocity.x,
 
-                y: -9
+                y: -10
 
             }
 
@@ -1403,17 +1633,14 @@ function update(time, delta) {
                 x:
                     this.rodaKanan.velocity.x,
 
-                y: -9
+                y: -10
 
             }
 
         );
 
 
-        // Cooldown supaya tombol
-        // tidak menyebabkan lompatan berulang.
-
-        jumpCooldown = 450;
+        jumpCooldown = 500;
 
 
         isJumpDown = false;
@@ -1422,7 +1649,7 @@ function update(time, delta) {
 
 
     // =================================================
-    // 7. BATAS KIRI LEVEL
+    // BATAS KIRI
     // =================================================
 
     if (
@@ -1446,11 +1673,27 @@ function update(time, delta) {
 
         );
 
+
+        M.Body.setVelocity(
+
+            this.badanRobot,
+
+            {
+
+                x: 0,
+
+                y:
+                    this.badanRobot.velocity.y
+
+            }
+
+        );
+
     }
 
 
     // =================================================
-    // 8. BATAS KANAN LEVEL
+    // BATAS KANAN
     // =================================================
 
     if (
@@ -1474,16 +1717,36 @@ function update(time, delta) {
 
         );
 
+
+        M.Body.setVelocity(
+
+            this.badanRobot,
+
+            {
+
+                x: 0,
+
+                y:
+                    this.badanRobot.velocity.y
+
+            }
+
+        );
+
     }
 
 
     // =================================================
-    // 9. CEK ZONA MERAH
+    // CEK KAYU
     // =================================================
 
     const box =
         kayu.body.position;
 
+
+    // =================================================
+    // ZONA MERAH
+    // =================================================
 
     if (
 
@@ -1507,7 +1770,7 @@ function update(time, delta) {
 
 
     // =================================================
-    // 10. CEK ZONA HIJAU
+    // ZONA HIJAU
     // =================================================
 
     else if (
@@ -1531,14 +1794,9 @@ function update(time, delta) {
     }
 
 
-    // =================================================
-    // 11. TIDAK ADA FINISH
-    // =================================================
-
     else {
 
         this.statusText.setText('');
 
     }
-
 }
