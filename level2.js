@@ -80,29 +80,29 @@ function create() {
     const M = Phaser.Physics.Matter.Matter;
 
     const badan = M.Bodies.rectangle(580, 600, 50, 35, { 
-        mass: 10, 
+        mass: 5, 
         frictionAir: 0.02, 
         collisionFilter: { group: -1 }
     }); 
 
     const rodaKiri = M.Bodies.circle(560, 615, 8, { 
-        friction: 1, mass: 5, collisionFilter: { group: -1 }
+         friction: 0.9, mass: 6, collisionFilter: { group: -1 }
     });
 
     const rodaKanan = M.Bodies.circle(600, 615, 8, { 
-        friction: 1, mass: 10, collisionFilter: { group: -1 }
+        friction: 0.9, mass: 6, collisionFilter: { group: -1 }
     });
 
     const engselKiri = M.Constraint.create({
         bodyA: badan, pointA: { x: -20, y: 15 },
         bodyB: rodaKiri, pointB: { x: 0, y: 0 },
-        stiffness: 1, length: 0
+        stiffness: 0.8, length: 0
     });
 
     const engselKanan = M.Constraint.create({
         bodyA: badan, pointA: { x: 20, y: 15 },
         bodyB: rodaKanan, pointB: { x: 0, y: 0 },
-        stiffness: 1, length: 0
+        stiffness: 0.8, length: 0
     });
 
     this.matter.world.add([badan, rodaKiri, rodaKanan, engselKiri, engselKanan]);
@@ -166,7 +166,7 @@ function create() {
 } // <--- INI DIA! Kurung kurawal penutup fungsi create() yang tadi hilang!
 
 function update() {
-    const kecRoda =0.05;
+    const kecRoda =0.35;
    // const gayaDorong = 0.008;
     const M = Phaser.Physics.Matter.Matter;
 
