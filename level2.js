@@ -452,7 +452,7 @@
             // 4. Movement Controls
             const left = cursors.left.isDown || isLeftDown;
             const right = cursors.right.isDown || isRightDown;
-            const targetWheelSpeed = 0.48;
+            const targetWheelSpeed = 0.6;
 
             if (left) {
                 M.Body.setAngularVelocity(this.rodaKiri, -targetWheelSpeed);
